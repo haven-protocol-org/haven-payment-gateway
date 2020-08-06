@@ -1,0 +1,14 @@
+[Unit]
+Description=Haven Wallet RPC
+After=network.target havend.service
+
+[Service]
+User=havenservices
+Group=havenservices
+WorkingDirectory=/opt/haven-wallets
+Type=simple
+ExecStart=/opt/haven-bin/haven-wallet-rpc --wallet-file /opt/haven-wallets/woocommerce --rpc-bind-port 18080 --password-file /opt/haven-wallets/woocommerce.password --disable-rpc-login --log-file /var/log/haven-wallet.log
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

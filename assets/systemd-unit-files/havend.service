@@ -1,0 +1,14 @@
+[Unit]
+Description=Haven Full Node
+After=network.target
+
+[Service]
+User=havenservices
+Group=havenservices
+WorkingDirectory=/opt/haven-data-dir
+Type=simple
+LimitNOFILE=65535
+ExecStart=/usr/bin/havend --log-file /var/log/havend.log --data-dir /opt/haven-data-dir --non-interactive
+Restart=always
+[Install]
+WantedBy=multi-user.target

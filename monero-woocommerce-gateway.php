@@ -13,10 +13,10 @@ Author URI: https://monerointegrations.com/
 defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
-define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://xmrchain.net/');
-define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://testnet.xmrchain.com/');
-define('MONERO_GATEWAY_ADDRESS_PREFIX', 0x12);
-define('MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0x13);
+define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://network-api.havenprotocol.org');
+define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://network-api.havenprotocol.org/api-stagenet/');
+define('MONERO_GATEWAY_ADDRESS_PREFIX', 0x5af4);
+define('MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
 define('MONERO_GATEWAY_ATOMIC_UNITS', 12);
 define('MONERO_GATEWAY_ATOMIC_UNIT_THRESHOLD', 10); // Amount under in atomic units payment is valid
 define('MONERO_GATEWAY_DIFFICULTY_TARGET', 120);
@@ -107,8 +107,8 @@ function monero_init() {
     add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
     function monero_add_currency_symbol($currency_symbol, $currency) {
         switch ($currency) {
-        case 'Monero':
-            $currency_symbol = 'XMR';
+        case 'Haven USD':
+            $currency_symbol = 'xUSD';
             break;
         }
         return $currency_symbol;

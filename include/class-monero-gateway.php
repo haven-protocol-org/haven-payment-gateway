@@ -212,6 +212,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
         $table_name = $wpdb->prefix.'monero_gateway_quotes';
+        global $wpdb, $xAssetSelected;
 
         $order = wc_get_order($order_id);
 

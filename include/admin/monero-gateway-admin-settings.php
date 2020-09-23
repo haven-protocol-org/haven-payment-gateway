@@ -49,7 +49,7 @@ return array(
         'type' => 'select',
         'options' => array(
             'viewkey'        => __('viewkey', 'monero_gateway'),
-            'monero-wallet-rpc' => __('monero-wallet-rpc', 'monero_gateway')
+            'haven-wallet-rpc' => __('haven-wallet-rpc', 'monero_gateway')
         ),
         'default' => 'viewkey'
     ),

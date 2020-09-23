@@ -2,7 +2,7 @@
 
 ## Features
 
-* Payment validation done through either `monero-wallet-rpc` or the [xmrchain.net blockchain explorer](https://xmrchain.net/).
+* Payment validation done through either `haven-wallet-rpc` or the [xmrchain.net blockchain explorer](https://xmrchain.net/).
 * Validates payments with `cron`, so does not require users to stay on the order confirmation page for their order to validate.
 * Order status updates are done through AJAX instead of Javascript page reloads.
 * Customers can pay with multiple transactions and are notified as soon as transactions hit the mempool.
@@ -34,16 +34,16 @@ This is the easiest way to start accepting Monero on your website. You'll need:
 
 Then simply select the `viewkey` option in the settings page and paste your address and viewkey. You're all set!
 
-Note on privacy: when you validate transactions with your private viewkey, your viewkey is sent to (but not stored on) xmrchain.net over HTTPS. This could potentially allow an attacker to see your incoming, but not outgoing, transactions if they were to get his hands on your viewkey. Even if this were to happen, your funds would still be safe and it would be impossible for somebody to steal your money. For maximum privacy use your own `monero-wallet-rpc` instance.
+Note on privacy: when you validate transactions with your private viewkey, your viewkey is sent to (but not stored on) xmrchain.net over HTTPS. This could potentially allow an attacker to see your incoming, but not outgoing, transactions if they were to get his hands on your viewkey. Even if this were to happen, your funds would still be safe and it would be impossible for somebody to steal your money. For maximum privacy use your own `haven-wallet-rpc` instance.
 
-## Option 2: Using `monero-wallet-rpc`
+## Option 2: Using `haven-wallet-rpc`
 
 The most secure way to accept Monero on your website. You'll need:
 
 * Root access to your webserver
 * Latest [Monero-currency binaries](https://github.com/monero-project/monero/releases)
 
-After downloading (or compiling) the Monero binaries on your server, install the [systemd unit files](https://github.com/monero-integrations/monerowp/tree/master/assets/systemd-unit-files) or run `monerod` and `monero-wallet-rpc` with `screen` or `tmux`. You can skip running `monerod` by using a remote node with `monero-wallet-rpc` by adding `--daemon-address node.moneroworld.com:18089` to the `monero-wallet-rpc.service` file.
+After downloading (or compiling) the Monero binaries on your server, install the [systemd unit files](https://github.com/monero-integrations/monerowp/tree/master/assets/systemd-unit-files) or run `monerod` and `haven-wallet-rpc` with `screen` or `tmux`. You can skip running `monerod` by using a remote node with `haven-wallet-rpc` by adding `--daemon-address node.moneroworld.com:18089` to the `haven-wallet-rpc.service` file.
 
 Note on security: using this option, while the most secure, requires you to run the Monero wallet RPC program on your server. Best practice for this is to use a view-only wallet since otherwise your server would be running a hot-wallet and a security breach could allow hackers to empty your funds.
 
@@ -54,11 +54,11 @@ Note on security: using this option, while the most secure, requires you to run 
 * `Discount for using Monero` - Percentage discount applied to orders for paying with Monero. Can also be negative to apply a surcharge. (Default: 0)
 * `Order valid time` - Number of seconds after order is placed that the transaction must be seen in the mempool. (Default: 3600 [1 hour])
 * `Number of confirmations` - Number of confirmations the transaction must recieve before the order is marked as complete. Use `0` for nearly instant confirmation. (Default: 5)
-* `Confirmation Type` - Confirm transactions with either your viewkey, or by using `monero-wallet-rpc`. (Default: viewkey)
+* `Confirmation Type` - Confirm transactions with either your viewkey, or by using `haven-wallet-rpc`. (Default: viewkey)
 * `Monero Address` (if confirmation type is viewkey) - Your public Monero address starting with 4. (No default)
 * `Secret Viewkey` (if confirmation type is viewkey) - Your *private* viewkey (No default)
-* `Monero wallet RPC Host/IP` (if confirmation type is `monero-wallet-rpc`) - IP address where the wallet rpc is running. It is highly discouraged to run the wallet anywhere other than the local server! (Default: 127.0.0.1)
-* `Monero wallet RPC port` (if confirmation type is `monero-wallet-rpc`) - Port the wallet rpc is bound to with the `--rpc-bind-port` argument. (Default 18080)
+* `Monero wallet RPC Host/IP` (if confirmation type is `haven-wallet-rpc`) - IP address where the wallet rpc is running. It is highly discouraged to run the wallet anywhere other than the local server! (Default: 127.0.0.1)
+* `Monero wallet RPC port` (if confirmation type is `haven-wallet-rpc`) - Port the wallet rpc is bound to with the `--rpc-bind-port` argument. (Default 18080)
 * `Testnet` - Check this to change the blockchain explorer links to the testnet explorer. (Default: unchecked)
 * `SSL warnings` - Check this to silence SSL warnings. (Default: unchecked)
 * `Show QR Code` - Show payment QR codes. (Default: unchecked)

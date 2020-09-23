@@ -4,7 +4,7 @@
 
 <h1>Haven Protocol Gateway Settings</h1>
 
-<?php if($confirm_type === 'monero-wallet-rpc'): ?>
+<?php if($confirm_type === 'haven-wallet-rpc'): ?>
 <div style="border:1px solid #ddd;padding:5px 10px;">
     <?php
          echo 'Wallet height: ' . $balance['height'] . '</br>';
@@ -23,7 +23,7 @@
 <script>
 function moneroUpdateFields() {
     var confirmType = jQuery("#woocommerce_monero_gateway_confirm_type").val();
-    if(confirmType == "monero-wallet-rpc") {
+    if(confirmType == "haven-wallet-rpc") {
         jQuery("#woocommerce_monero_gateway_monero_address").closest("tr").hide();
         jQuery("#woocommerce_monero_gateway_viewkey").closest("tr").hide();
         jQuery("#woocommerce_monero_gateway_daemon_host").closest("tr").show();

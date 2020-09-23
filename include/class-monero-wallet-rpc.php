@@ -8,7 +8,7 @@
  * @author Kacper Rowinski <krowinski@implix.com>
  * http://implix.com
  * Modified to work with monero-rpc wallet by Serhack and cryptochangements
- * Modified to work with monero-wallet-rpc wallet by mosu-forge
+ * Modified to work with haven-wallet-rpc wallet by mosu-forge
  */
 
 defined( 'ABSPATH' ) || exit;

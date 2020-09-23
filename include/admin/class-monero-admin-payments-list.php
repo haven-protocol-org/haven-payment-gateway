@@ -54,7 +54,7 @@ class Monero_Admin_Payments_List extends WP_List_Table {
             } else {
                 $tab_info['all']['active'] = 'class="current" aria-current="page"';
             }
-            if(Monero_Gateway::get_confirm_type() == 'monero-wallet-rpc') {
+            if(Monero_Gateway::get_confirm_type() == 'haven-wallet-rpc') {
                 $balance = Monero_Gateway::admin_balance_info();
                 $balance_info = <<<HTML
 <div style="border:1px solid #ddd;padding:5px 10px;">

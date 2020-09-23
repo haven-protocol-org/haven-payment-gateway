@@ -379,7 +379,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             }
 
             if($paid && $confirmed) {
-                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id");
+                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id (currency: $quote->currency)");
                 $query = $wpdb->prepare("UPDATE $table_name_1 SET confirmed=1,paid=1,pending=0 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 

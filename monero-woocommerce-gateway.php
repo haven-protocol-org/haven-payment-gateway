@@ -176,7 +176,7 @@ function monero_init() {
       }
       return $currency_symbol;
     }
-
+    /*
     if(Monero_Gateway::use_monero_price()) {
 
         // This filter will replace all prices with amount in Monero (live rates)
@@ -213,7 +213,7 @@ function monero_init() {
             return $total_rows;
         }
 
-    }
+    }*/
 
     add_action('wp_enqueue_scripts', 'monero_enqueue_scripts');
     function monero_enqueue_scripts() {
@@ -227,6 +227,7 @@ function monero_init() {
         wp_enqueue_style('monero-gateway', MONERO_GATEWAY_PLUGIN_URL.'assets/css/monero-gateway-order-page.css');
     }
 
+    /*
     // [monero-price currency="USD"]
     // currency: BTC, GBP, etc
     // if no none, then default store currency
@@ -246,7 +247,7 @@ function monero_init() {
         return "<span class=\"monero-price\">1 XHV = $rate_formatted $currency</span>";
     }
     add_shortcode('monero-price', 'monero_price_func');
-
+    */
 
     // [monero-accepted-here]
     function monero_accepted_func() {

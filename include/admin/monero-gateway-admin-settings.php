@@ -104,13 +104,13 @@ return array(
         'description' => __('Enable this to show a QR code after checkout with payment details.'),
         'default' => 'no'
     ),
-    'use_monero_price' => array(
+    /*'use_monero_price' => array(
         'title' => __('Show Prices in XHV', 'monero_gateway'),
         'label' => __('Show Prices in XHV', 'monero_gateway'),
         'type' => 'checkbox',
         'description' => __('Enable this to convert ALL prices on the frontend to Haven Protocol (experimental)'),
         'default' => 'no'
-    ),
+    ),*/
     'use_monero_price_decimals' => array(
         'title' => __('Display Decimals', 'monero_gateway'),
         'type' => __('number'),

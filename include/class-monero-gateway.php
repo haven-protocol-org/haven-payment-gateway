@@ -234,10 +234,12 @@ class Monero_Gateway extends WC_Payment_Gateway
           }
         }
 
-        $currency = $order->get_currency();
-        $rate = self::get_live_rate($currency);
-        $fiat_amount = $order->get_total('');
-        $monero_amount = 1e8 * $fiat_amount / $rate;
+        //$currency = $order->get_currency();
+        //$rate = self::get_live_rate($currency);
+        //$fiat_amount = $order->get_total('');
+        //$monero_amount = 1e8 * $fiat_amount / $rate;
+
+        $monero_amount = $order->get_total(''); //TODO Is this the right amount????
 
         if(self::$discount)
             $monero_amount = $monero_amount - $monero_amount * self::$discount / 100;
@@ -265,9 +267,9 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
 
-        // Get Live Price
-        $currencies = implode(',', self::$currencies);
-        $api_link = 'https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms='.$currencies.'&extraParams=monero_woocommerce';
+        /* Not neeeded atm
+        // Get Live Price (XHV prices only)
+        $api_link = 'https://oracle.havenprotocol.org/';
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,
@@ -278,17 +280,19 @@ class Monero_Gateway extends WC_Payment_Gateway
         $price = json_decode($resp, true);
 
         if(!isset($price['Response']) || $price['Response'] != 'Error') {
-            $table_name = $wpdb->prefix.'monero_gateway_live_rates';
-            foreach($price as $currency=>$rate) {
+            $table_name = $wpdb->prefix.'haven_gateway_live_rates';
+            foreach(self::$currencies as $currency){
+                $rate = $price['pr']['x'.$currency];
                 // shift decimal eight places for precise int storage
-                $rate = intval($rate * 1e8);
+                $rate = intval($rate/1000000000000 * 1e8);
                 $query = $wpdb->prepare("INSERT INTO $table_name (currency, rate, updated) VALUES (%s, %d, NOW()) ON DUPLICATE KEY UPDATE rate=%d, updated=NOW()", array($currency, $rate, $rate));
                 $wpdb->query($query);
             }
         }
         else{
-             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from cryptocompare.com.");
+             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from oracle.havenprotocol.org.");
         }
+        */
 
         // Get current network/wallet height
         if(self::$confirm_type == 'monero-wallet-rpc')

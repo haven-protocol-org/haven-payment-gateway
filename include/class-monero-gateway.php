@@ -92,7 +92,6 @@ class Monero_Gateway extends WC_Payment_Gateway
         // Add the currency of the shop to $currencies array. Needed for do_update_event() function
         $currency_shop = get_woocommerce_currency();
 		array_push(self::$currencies, $currency_shop);
-        
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
 
@@ -185,8 +184,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         } else {
             return array(
                 'height' => $height,
-                'balance' => self::format_monero($wallet_amount['balance']).' Monero',
-                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Monero'
+                'balance' => self::format_monero($wallet_amount['balance']).' Haven',
+                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Haven'
             );
         }
     }
@@ -246,7 +245,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
         $monero_amount = intval($monero_amount * MONERO_GATEWAY_ATOMIC_UNITS_POW);
 
-        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $currency, $rate, $monero_amount));
+        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $monero_amount));
         $wpdb->query($query);
 
         $order->update_status('on-hold', __('Awaiting offline payment', 'monero_gateway'));
@@ -712,6 +711,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public static function convert_wc_price($price, $currency)
     {
+
         $rate = self::get_live_rate($currency);
         $monero_amount = intval(MONERO_GATEWAY_ATOMIC_UNITS_POW * 1e8 * $price / $rate) / MONERO_GATEWAY_ATOMIC_UNITS_POW;
         $monero_amount_formatted = sprintf('%.'.self::$use_monero_price_decimals.'f', $monero_amount);
@@ -757,7 +757,7 @@ HTML;
 HTML;
     }
 
-    public static function get_live_rate($currency)
+    public static function get_live_rate($currency) // 2 EUR
     {
         if(isset(self::$rates[$currency]))
             return self::$rates[$currency];

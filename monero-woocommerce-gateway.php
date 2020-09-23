@@ -253,7 +253,7 @@ function monero_init() {
     function monero_accepted_func() {
         return '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-accepted-here2x.png" />';
     }
-    add_shortcode('monero-accepted-here', 'monero_accepted_func');
+    add_shortcode('haven-accepted-here', 'monero_accepted_func');
 
 }
 

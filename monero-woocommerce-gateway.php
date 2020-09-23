@@ -21,6 +21,31 @@ define('MONERO_GATEWAY_ATOMIC_UNITS', 12);
 define('MONERO_GATEWAY_ATOMIC_UNIT_THRESHOLD', 10); // Amount under in atomic units payment is valid
 define('MONERO_GATEWAY_DIFFICULTY_TARGET', 120);
 
+define('HAVEN_XASSETS',
+[
+  'xUSD' =>
+  [
+    'symbol' => '$',
+    'wc'     => 'USD'
+  ],
+  'xEUR' =>
+  [
+    'symbol' => '€',
+    'wc'     => 'EUR'
+  ],
+  'xCNY' =>
+  [
+    'symbol' => '¥',
+    'wc'     => 'CNY'
+  ],
+  'xGOLD' =>
+  [
+    'symbol' => 'G',
+    'wc'     => 'GOLD'
+  ]
+]
+);
+
 // Do not edit these constants
 define('MONERO_GATEWAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MONERO_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -98,20 +123,22 @@ function monero_init() {
         Monero_Gateway::get_payment_details_ajax();
     }
 
+    //Add them to the choice list of currency in admin
     add_filter('woocommerce_currencies', 'monero_add_currency');
     function monero_add_currency($currencies) {
-        $currencies['Monero'] = __('Monero', 'monero_gateway');
+        foreach(HAVEN_XASSETS as $xAsset => $options){
+          $currencies[$xAsset] = __($xAsset, 'monero_gateway');
+        }
+
         return $currencies;
     }
 
     add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
     function monero_add_currency_symbol($currency_symbol, $currency) {
-        switch ($currency) {
-        case 'Monero':
-            $currency_symbol = 'XMR';
-            break;
-        }
-        return $currency_symbol;
+      if(!empty(HAVEN_XASSETS[$currency]['symbol'])){
+        $currency_symbol = HAVEN_XASSETS[$currency]['symbol'];
+      }
+      return $currency_symbol;
     }
 
     if(Monero_Gateway::use_monero_price()) {

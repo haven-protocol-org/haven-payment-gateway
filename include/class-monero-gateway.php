@@ -750,7 +750,7 @@ HTML;
             <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
         data-rate="$rate" data-rate-type="fixed">
             $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
+            <span class="woocommerce-Price-currencySymbol">XHV</span>
         </span>
 
 HTML;

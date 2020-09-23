@@ -13,7 +13,7 @@ Author URI: https://monerointegrations.com/
 defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
-define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://xmrchain.net/');
+define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
 define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://testnet.xmrchain.com/');
 define('MONERO_GATEWAY_ADDRESS_PREFIX', 0x12);
 define('MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0x13);

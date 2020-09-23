@@ -76,6 +76,39 @@ function monero_init() {
         return $methods;
     }
 
+
+  add_filter( 'woocommerce_available_payment_gateways', 'haven_unset_gateway_if_unused' );
+
+  function haven_unset_gateway_if_unused( $available_gateways ) {
+      global $xAssetSelected;
+      if ( is_admin() ) return $available_gateways;
+      if ( ! is_checkout() ) return $available_gateways;
+      $unset = true;
+      $selected_currency = get_woocommerce_currency();
+
+      foreach(HAVEN_XASSETS as $xAsset => $options){
+        //Ony be able to activate when xAsset = xAsset OR if xAsset = (x)Asset
+        if($xAsset == $selected_currency || $options['wc'] == $selected_currency){
+          $xAssetSelected = $xAsset;
+          $unset = false;
+          break;
+        }
+      }
+
+      if($unset){
+        unset( $available_gateways['monero_gateway'] );
+      }
+      return $available_gateways;
+  }
+
+  add_filter( 'woocommerce_gateway_title', 'change_cheque_payment_gateway_title', 100, 2 );
+  function change_cheque_payment_gateway_title( $title, $payment_id ){
+      if( $payment_id === 'monero_gateway' ) {
+          $title = __($title." <span style='opacity:0.6'>($".$xAssetSelected.")</span>", "woocommerce");
+      }
+      return $title;
+  }
+
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'monero_payment');
     function monero_payment($links) {
         $plugin_links = array(
@@ -209,7 +242,7 @@ function monero_init() {
         else
             $rate_formatted = sprintf('%.5f', $rate / 1e8);
 
-        return "<span class=\"monero-price\">1 XMR = $rate_formatted $currency</span>";
+        return "<span class=\"monero-price\">1 XHV = $rate_formatted $currency</span>";
     }
     add_shortcode('monero-price', 'monero_price_func');
 
@@ -258,6 +291,7 @@ function monero_install() {
                payment_id VARCHAR(95) DEFAULT '' NOT NULL,
                txid VARCHAR(64) DEFAULT '' NOT NULL,
                amount BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+               currency VARCHAR(20) DEFAULT '' NOT NULL,
                height MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                PRIMARY KEY (id),
                UNIQUE KEY (payment_id, txid, amount)

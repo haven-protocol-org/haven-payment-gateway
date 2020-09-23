@@ -52,6 +52,8 @@ define('MONERO_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MONERO_GATEWAY_ATOMIC_UNITS_POW', pow(10, MONERO_GATEWAY_ATOMIC_UNITS));
 define('MONERO_GATEWAY_ATOMIC_UNITS_SPRINTF', '%.'.MONERO_GATEWAY_ATOMIC_UNITS.'f');
 
+$xAssetSelected = "";
+
 // Include our Gateway Class and register Payment Gateway with WooCommerce
 add_action('plugins_loaded', 'monero_init', 1);
 function monero_init() {

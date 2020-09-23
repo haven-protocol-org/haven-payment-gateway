@@ -357,7 +357,9 @@ class Monero_Gateway extends WC_Payment_Gateway
             $heights = array();
             $amount_paid = 0;
             foreach($txs as $tx) {
-                $amount_paid += $tx->amount;
+                if($quote->currency == $tx->currency){
+                  $amount_paid += $tx->amount;
+                }
                 $heights[] = $tx->height;
             }
 

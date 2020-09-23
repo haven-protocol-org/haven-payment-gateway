@@ -342,7 +342,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $old_txs[] = (object) $new_tx;
                 }
 
-                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, amount, height) VALUES (%s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
+                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %d, %s, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['amount'], $new_tx['currency'], $new_tx['height'], $new_tx['height']));
                 $wpdb->query($query);
             }
 
@@ -424,6 +424,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['in'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -433,6 +434,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['pool'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -449,6 +451,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             if($payment['payment_id'] == $payment_id) {
                 $txs[] = array(
                     'amount' => $payment['amount'],
+                    'currency' => $payment['currency'],
                     'txid' => $payment['tx_hash'],
                     'height' => $payment['block_no']
                 );
@@ -480,6 +483,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                 $txs[] = array(
                     'txid' => $tx->txid,
                     'height' => $tx->height,
+                    'currency' => $tx->currency,
                     'amount' => $tx->amount_paid,
                     'amount_formatted' => self::format_monero($tx->amount_paid)
                 );

@@ -63,7 +63,7 @@ Once you installed and activated WooCommerce, you may install and activate Moner
 = 3.0.0 =
 Huge shoutout to mosu-forge who contributes a lot to make 3.0 possible.
 * Ability to set number of confirms: 0 for zero conf, up to 60.
-* Amount owed in XMR gets locked in after the order for a configurable amount of time after which the order is invalid, default 60 minutes.
+* Amount owed in XHV gets locked in after the order for a configurable amount of time after which the order is invalid, default 60 minutes.
 * Shows transactions received along with the number of confirms right on the order success page, auto-updates through AJAX.
 * QR code generation is done with Javascript instead of sending payment details to a 3rd party.
 * Admin page for showing all transactions made to the wallet.

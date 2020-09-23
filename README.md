@@ -83,22 +83,22 @@ This will display the price of Monero in the selected currency. If no currency i
 ```
 Will display:
 ```
-1 XMR = 123.68000 USD
-1 XMR = 0.01827000 BTC
-1 XMR = 123.68000 USD
-1 XMR = 168.43000 CAD
-1 XMR = 105.54000 EUR
-1 XMR = 94.84000 GBP
+1 XHV = 123.68000 USD
+1 XHV = 0.01827000 BTC
+1 XHV = 123.68000 USD
+1 XHV = 168.43000 CAD
+1 XHV = 105.54000 EUR
+1 XHV = 94.84000 GBP
 ```
 
 
 #### Monero accepted here badge
 
-This will display a badge showing that you accept Monero-currency.
+This will display a badge showing that you accept Haven-currency.
 
-`[monero-accepted-here]`
+`[haven-accepted-here]`
 
-![Monero Accepted Here](/assets/images/monero-accepted-here.png?raw=true "Monero Accepted Here")
+![Haven Accepted Here](/assets/images/haven-accepted-here2x.png?raw=true "Monero Accepted Here")
 
 ## Donations
 

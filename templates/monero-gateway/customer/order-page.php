@@ -10,7 +10,7 @@
 
         <span class="monero_payment_paid">We have received your payment in full. Please wait while amount is confirmed. Approximate confirm time is <span class="monero_confirm_time"></span>. <?php if(is_wc_endpoint_url('order-received')): ?><br/>You can <a href="<?php echo $details['my_order_url']; ?>">check your payment status</a> anytime in your account dashboard.<?php endif; ?></span>
 
-        <span class="monero_payment_confirmed">Your order has been confirmed. Thank you for paying with Monero!</span>
+        <span class="monero_payment_confirmed">Your order has been confirmed. Thank you for paying with Haven!</span>
 
         <span class="monero_payment_expired">Your order has expired. Please place another order to complete your purchase.</span>
 
@@ -40,7 +40,7 @@
             Total due:
             <strong class="monero_details_row">
                 <span class="monero_details_main">
-                    <span id="monero_total_due"></span> XMR
+                    <span id="monero_total_due"></span> XHV
                 </span>
                 <span class="monero_details_right button-row">
                     <button href="#" class="button clipboard" title="Copy Amount"
@@ -53,13 +53,13 @@
         <li style="display:none">
             Total order amount:
             <strong>
-                <span id="monero_total_amount"></span> XMR
+                <span id="monero_total_amount"></span> XHV
             </strong>
         </li>
         <li>
             Total paid:
             <strong>
-                <span id="monero_total_paid"></span> XMR
+                <span id="monero_total_paid"></span> XHV
             </strong>
         </li>
         <li>

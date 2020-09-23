@@ -1,5 +1,5 @@
 [Unit]
-Description=Haven Wallet RPC
+Description=Haven Protocol Wallet RPC
 After=network.target havend.service
 
 [Service]

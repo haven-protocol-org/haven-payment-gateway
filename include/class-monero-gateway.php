@@ -11,9 +11,9 @@ require_once('class-monero-cryptonote.php');
 class Monero_Gateway extends WC_Payment_Gateway
 {
     private static $_id = 'monero_gateway';
-    private static $_title = 'Monero Gateway';
-    private static $_method_title = 'Monero Gateway';
-    private static $_method_description = 'Monero Gateway Plug-in for WooCommerce.';
+    private static $_title = 'Haven Protocol Gateway';
+    private static $_method_title = 'Haven Protocol Gateway';
+    private static $_method_description = 'Haven Protocol Gateway Plug-in for WooCommerce.';
     private static $_errors = [];
 
     private static $discount = false;
@@ -118,7 +118,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             if (strlen($address) == 95 && substr($address, 0, 1) == '4')
                 if(self::$cryptonote->verify_checksum($address))
                     return $address;
-            self::$_errors[] = 'Monero address is invalid';
+            self::$_errors[] = 'Haven Protocol address is invalid';
         }
         return $address;
     }
@@ -296,8 +296,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         set_transient('monero_gateway_network_height', $height);
 
         // Get pending payments
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());
         $rows = $wpdb->get_results($query);
@@ -466,8 +466,8 @@ class Monero_Gateway extends WC_Payment_Gateway
             return self::$payment_details[$order_id];
 
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
@@ -523,8 +523,8 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $pub_viewkey = $decoded_address['viewkey'];
                     $integrated_addr = self::$cryptonote->integrated_addr_from_keys($pub_spendkey, $pub_viewkey, $payment_id);
                 } else {
-                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Monero address');
-                    return '[ERROR] Merchant has not set Monero address';
+                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Haven Protocol address');
+                    return '[ERROR] Merchant has not set Haven Protocol address';
                 }
             }
 
@@ -708,7 +708,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
         data-rate="$rate" data-rate-type="live">
             $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
+            <span class="woocommerce-Price-currencySymbol">XHV</span>
         </span>
 
 HTML;

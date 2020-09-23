@@ -1,8 +1,8 @@
 <?php foreach($errors as $error): ?>
-<div class="error"><p><strong>Monero Gateway Error</strong>: <?php echo $error; ?></p></div>
+<div class="error"><p><strong>Haven Protocol Gateway Error</strong>: <?php echo $error; ?></p></div>
 <?php endforeach; ?>
 
-<h1>Monero Gateway Settings</h1>
+<h1>Haven Protocol Gateway Settings</h1>
 
 <?php if($confirm_type === 'monero-wallet-rpc'): ?>
 <div style="border:1px solid #ddd;padding:5px 10px;">
@@ -18,7 +18,7 @@
     <?php echo $settings_html ?>
 </table>
 
-<h4><a href="https://github.com/monero-integrations/monerowp">Learn more about using the Monero payment gateway</a></h4>
+<h4><a href="https://github.com/monero-integrations/monerowp">Learn more about using the Haven Protocol payment gateway</a></h4>
 
 <script>
 function moneroUpdateFields() {

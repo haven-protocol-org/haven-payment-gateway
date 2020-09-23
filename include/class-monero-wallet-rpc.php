@@ -178,7 +178,7 @@ class Monero_Wallet_Rpc
         // check for curl error
         if (0 < curl_errno($ch)) {
             if(is_admin())
-                echo '[ERROR] Failed to connect to monero-wallet-rpc at ' . $this->host . ' port '. $this->port .'</br>';
+                echo '[ERROR] Failed to connect to haven-wallet-rpc at ' . $this->host . ' port '. $this->port .'</br>';
         }
         // close the connection
         curl_close($ch);
@@ -342,14 +342,14 @@ class Monero_Wallet_Rpc
         $get_bulk_payments = $this->_run('get_bulk_payments', $get_bulk_payments_parameters);
         return $get_bulk_payments;
     }
-    
+
     public function get_transfers($arr)
     {
         $get_parameters = $arr;
         $get_transfers = $this->_run('get_transfers', $get_parameters);
         return $get_transfers;
     }
-    
+
     public function get_address_index($subaddress)
     {
         $params = array('address' => $subaddress);

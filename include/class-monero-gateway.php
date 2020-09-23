@@ -340,7 +340,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             foreach($new_txs as $new_tx) {
                 $is_new_tx = true;
                 foreach($old_txs as $old_tx) {
-                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid) {
+                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid && $new_tx['currency'] == $old_tx->currency) {
                         $is_new_tx = false;
                         break;
                     }

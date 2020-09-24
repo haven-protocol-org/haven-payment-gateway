@@ -105,7 +105,7 @@ function monero_init() {
   function change_cheque_payment_gateway_title( $title, $payment_id ){
       global $xAssetSelected;
       if( $payment_id === 'monero_gateway' ) {
-          $title = __($title." <span style='opacity:0.6'>($".$xAssetSelected.")</span>", "woocommerce");
+          $title = __($title." ($".$xAssetSelected.")", "woocommerce");
       }
       return $title;
   }

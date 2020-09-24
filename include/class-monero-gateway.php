@@ -478,7 +478,7 @@ class Monero_Gateway extends WC_Payment_Gateway
         global $wpdb;
         $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
         $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
-        $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
+        $query = $wpdb->prepare("SELECT *, $table_name_1.currency as currency, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
             $txs = array();

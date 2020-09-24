@@ -62,7 +62,7 @@ function monero_updateDetails() {
             break;
     }
 
-    jQuery('#monero_exchange_rate').html('1 XHV = '+details.rate_formatted+' '+details.currency);
+    //jQuery('#monero_exchange_rate').html('1 XHV = '+details.rate_formatted+' '+details.currency);
     jQuery('#monero_total_amount').html(details.amount_total_formatted);
     jQuery('#monero_total_paid').html(details.amount_paid_formatted);
     jQuery('#monero_total_due').html(details.amount_due_formatted);

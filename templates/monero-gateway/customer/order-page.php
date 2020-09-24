@@ -40,7 +40,7 @@
             Total due:
             <strong class="monero_details_row">
                 <span class="monero_details_main">
-                    <span id="monero_total_due"></span> XHV
+                    <span id="monero_total_due"></span> <?= $details['currency'] ?>
                 </span>
                 <span class="monero_details_right button-row">
                     <button href="#" class="button clipboard" title="Copy Amount"
@@ -53,18 +53,18 @@
         <li style="display:none">
             Total order amount:
             <strong>
-                <span id="monero_total_amount"></span> XHV
+                <span id="monero_total_amount"></span> <?= $details['currency'] ?>
             </strong>
         </li>
         <li>
             Total paid:
             <strong>
-                <span id="monero_total_paid"></span> XHV
+                <span id="monero_total_paid"></span> <?= $details['currency'] ?>
             </strong>
         </li>
-        <li>
+        <!---<li>
             Exchange rate:<strong id="monero_exchange_rate"></strong>
-        </li>
+        </li>-->
     </ul>
 
 

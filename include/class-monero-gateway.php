@@ -266,6 +266,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
 
+
         /* Not neeeded atm
         // Get Live Price (XHV prices only)
         $api_link = 'https://oracle.havenprotocol.org/';
@@ -305,6 +306,7 @@ class Monero_Gateway extends WC_Payment_Gateway
         $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());
+
         $rows = $wpdb->get_results($query);
 
         $pending_payments = array();

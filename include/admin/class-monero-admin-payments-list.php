@@ -173,7 +173,7 @@ HTML;
             'col_payment_id' => __('Payment ID'),
             'col_txid' => __('Txid'),
             'col_height' => __('Height'),
-            'col_amount' => __('Amount'),
+            'col_amount' => __('Amount')
         );
     }
 

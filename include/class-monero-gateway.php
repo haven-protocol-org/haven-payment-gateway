@@ -347,7 +347,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $old_txs[] = (object) $new_tx;
                 }
 
-                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %d, %s, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['amount'], $new_tx['currency'], $new_tx['height'], $new_tx['height']));
+                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['currency'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
                 $wpdb->query($query);
             }
 

@@ -87,7 +87,7 @@ function monero_updateDetails() {
                 '<a href="'+monero_explorer_url+'/tx/'+tx.txid+'" target="_blank">'+tx.txid+'</a>'+
                 '</td>'+
                 '<td>'+height+'</td>'+
-                '<td>'+tx.amount_formatted+' Monero</td>'+
+                '<td>'+tx.amount_formatted+' '+tx.currency+'</td>'+
                 '</tr>';
 
             jQuery('#monero_tx_table tbody').append(row);

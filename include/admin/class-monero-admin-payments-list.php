@@ -145,7 +145,7 @@ HTML;
             echo $item->height;
             break;
         case 'col_amount':
-            echo Monero_Gateway::format_monero($item->amount).' Haven';
+            echo Monero_Gateway::format_monero($item->amount).' '.$item->currency;
             break;
         }
     }
@@ -258,7 +258,7 @@ HTML;
 
         $query_order = $wpdb->prepare('ORDER BY id DESC LIMIT %d, %d;', ($current_page-1)*$per_page, $per_page);
 
-        $query = "SELECT t1.order_id, t1.confirmed, t1.paid, t1.currency, t1.pending, t2.* FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where} {$query_order}";
+        $query = "SELECT t1.order_id, t1.confirmed, t1.paid, t1.pending, t1.currency, t2.* FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where} {$query_order}";
 
         $this->items = $wpdb->get_results($query);
 

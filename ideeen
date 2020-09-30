@@ -1,0 +1,14 @@
+https://stackoverflow.com/questions/56253265/save-and-display-specific-payment-gateway-additional-field-everywhere-in-woocomm
+
+
+- Resterende tijd in of exclusief confirmation?
+
+TODO!!
+
+- Pay in different xAssets ? Option box select, if currency xAsset is selected allow paying with in other xAsset currency
+
+
+
+https://explorer.havenprotocol.org/api/outputsblocks?address=hvxxuhpUFPzQxVo5PnX7swMgPsABGJZoLMkavRNQzX8cMvivLAhGfyeUz7kWBR7kerYkyDa946L49UuwdiqLr4rQ38orb5PKKU&viewkey=96d189108fb1ca71a4c403e2e1eb797336bb526f8d030d59b9b8eb4561398b06&limit=5&mempool=0
+
+{"data":{"address":"14a1cd25d58f3a82f63c317ca27ba2073b8a3469177c109ca5d30122e97d1c2269720493e5a74f5acdb728a10fbdde8511d48f0f9aa6e132cae9461eb538543b","height":687949,"limit":"5","mempool":false,"outputs":[{"amount":799389200000,"block_no":687946,"currency":"xUSD","in_mempool":false,"output_idx":1,"output_pubkey":"26ae1b3077d68ae03b9ee920a460cc8aa362160f431bd2382677f2efb1e75198","payment_id":"41103023f578470f","tx_hash":"077f1e3ac069beb957586805cc08e1ae1711f6dd59492d15e6ba2169b490e5ca"}],"viewkey":"96d189108fb1ca71a4c403e2e1eb797336bb526f8d030d59b9b8eb4561398b06"},"status":"success"}

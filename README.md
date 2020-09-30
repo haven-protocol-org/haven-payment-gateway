@@ -1,3 +1,9 @@
+# WARNING DO NOT USE!!
+
+* Development fase
+* Not registrating xAssets payments (payment_id issue, already resolved in new update)
+* RPC commands not tested yet
+
 # Haven Protocol Gateway for WooCommerce
 
 ## Features

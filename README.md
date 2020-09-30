@@ -1,3 +1,7 @@
+# WARNING DO NOT USE!!
+
+It's still in development fase.
+
 # Haven Protocol Gateway for WooCommerce
 
 ## Features

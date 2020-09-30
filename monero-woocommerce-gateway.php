@@ -13,8 +13,13 @@ Author URI: https://monerointegrations.com/
 defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
+<<<<<<< HEAD
 define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
 define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer.testnet.havenprotocol.org/');
+=======
+define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://network-api.havenprotocol.org');
+define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://network-api.havenprotocol.org/api-stagenet/');
+>>>>>>> 76836fe88629bbb2ef2d1cd299a3139d25c717bd
 define('MONERO_GATEWAY_ADDRESS_PREFIX', 0x5af4);
 define('MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
 define('MONERO_GATEWAY_ATOMIC_UNITS', 12);
@@ -171,10 +176,19 @@ function monero_init() {
 
     add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
     function monero_add_currency_symbol($currency_symbol, $currency) {
+<<<<<<< HEAD
       if(!empty(HAVEN_XASSETS[$currency]['symbol'])){
         $currency_symbol = HAVEN_XASSETS[$currency]['symbol'];
       }
       return $currency_symbol;
+=======
+        switch ($currency) {
+        case 'Haven USD':
+            $currency_symbol = 'xUSD';
+            break;
+        }
+        return $currency_symbol;
+>>>>>>> 76836fe88629bbb2ef2d1cd299a3139d25c717bd
     }
     /*
     if(Monero_Gateway::use_monero_price()) {

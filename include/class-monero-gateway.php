@@ -116,7 +116,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     public function validate_monero_address_field($key,$address)
     {
         if($this->settings['confirm_type'] == 'viewkey') {
-            if (strlen($address) == 95 && substr($address, 0, 1) == '4')
+            if (strlen($address) == 98 && substr($address, 0, 2) == 'hv')
                 if(self::$cryptonote->verify_checksum($address))
                     return $address;
             self::$_errors[] = 'Haven Protocol address is invalid';

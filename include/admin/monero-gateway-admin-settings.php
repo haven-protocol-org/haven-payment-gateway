@@ -13,17 +13,17 @@ return array(
         'title' => __('Title', 'monero_gateway'),
         'type' => 'text',
         'desc_tip' => __('Payment title the customer will see during the checkout process.', 'monero_gateway'),
-        'default' => __('Monero Gateway', 'monero_gateway')
+        'default' => __('Haven Protocol Gateway', 'monero_gateway')
     ),
     'description' => array(
         'title' => __('Description', 'monero_gateway'),
         'type' => 'textarea',
         'desc_tip' => __('Payment description the customer will see during the checkout process.', 'monero_gateway'),
-        'default' => __('Pay securely using Monero. You will be provided payment details after checkout.', 'monero_gateway')
+        'default' => __('Pay securely using the Haven Protocol. You will be provided payment details after checkout.', 'monero_gateway')
     ),
     'discount' => array(
-        'title' => __('Discount for using Monero', 'monero_gateway'),
-        'desc_tip' => __('Provide a discount to your customers for making a private payment with Monero', 'monero_gateway'),
+        'title' => __('Discount for using Haven', 'monero_gateway'),
+        'desc_tip' => __('Provide a discount to your customers for making a private payment with Haven', 'monero_gateway'),
         'description' => __('Enter a percentage discount (i.e. 5 for 5%) or leave this empty if you do not wish to provide a discount', 'monero_gateway'),
         'type' => __('number'),
         'default' => '0'
@@ -49,15 +49,15 @@ return array(
         'type' => 'select',
         'options' => array(
             'viewkey'        => __('viewkey', 'monero_gateway'),
-            'monero-wallet-rpc' => __('monero-wallet-rpc', 'monero_gateway')
+            'haven-wallet-rpc' => __('haven-wallet-rpc', 'monero_gateway')
         ),
         'default' => 'viewkey'
     ),
     'monero_address' => array(
-        'title' => __('Monero Address', 'monero_gateway'),
+        'title' => __('Haven Protocol Address', 'monero_gateway'),
         'label' => __('Useful for people that have not a daemon online'),
         'type' => 'text',
-        'desc_tip' => __('Monero Wallet Address (MoneroL)', 'monero_gateway')
+        'desc_tip' => __('Haven Protocol Wallet Address', 'monero_gateway')
     ),
     'viewkey' => array(
         'title' => __('Secret Viewkey', 'monero_gateway'),
@@ -66,13 +66,13 @@ return array(
         'desc_tip' => __('Your secret Viewkey', 'monero_gateway')
     ),
     'daemon_host' => array(
-        'title' => __('Monero wallet RPC Host/IP', 'monero_gateway'),
+        'title' => __('Haven Protocol wallet RPC Host/IP', 'monero_gateway'),
         'type' => 'text',
         'desc_tip' => __('This is the Daemon Host/IP to authorize the payment with', 'monero_gateway'),
         'default' => '127.0.0.1',
     ),
     'daemon_port' => array(
-        'title' => __('Monero wallet RPC port', 'monero_gateway'),
+        'title' => __('Haven Protocol wallet RPC port', 'monero_gateway'),
         'type' => __('number'),
         'desc_tip' => __('This is the Wallet RPC port to authorize the payment with', 'monero_gateway'),
         'default' => '18080',
@@ -104,13 +104,13 @@ return array(
         'description' => __('Enable this to show a QR code after checkout with payment details.'),
         'default' => 'no'
     ),
-    'use_monero_price' => array(
-        'title' => __('Show Prices in Monero', 'monero_gateway'),
-        'label' => __('Show Prices in Monero', 'monero_gateway'),
+    /*'use_monero_price' => array(
+        'title' => __('Show Prices in XHV', 'monero_gateway'),
+        'label' => __('Show Prices in XHV', 'monero_gateway'),
         'type' => 'checkbox',
-        'description' => __('Enable this to convert ALL prices on the frontend to Monero (experimental)'),
+        'description' => __('Enable this to convert ALL prices on the frontend to Haven Protocol (experimental)'),
         'default' => 'no'
-    ),
+    ),*/
     'use_monero_price_decimals' => array(
         'title' => __('Display Decimals', 'monero_gateway'),
         'type' => __('number'),

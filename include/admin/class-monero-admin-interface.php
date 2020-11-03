@@ -27,7 +27,7 @@ class Monero_Admin_Interface {
     public function meta_boxes() {
         add_meta_box(
             'monero_admin_order_details',
-            __('Monero Gateway','monero_gateway'),
+            __('Haven Protocol Gateway','monero_gateway'),
             array($this, 'meta_box_order_details'),
             'shop_order',
             'normal',
@@ -47,12 +47,12 @@ class Monero_Admin_Interface {
      */
     public function admin_menu() {
         add_menu_page(
-            __('Monero', 'monero_gateway'),
-            __('Monero', 'monero_gateway'),
+            __('Haven Protocol', 'monero_gateway'),
+            __('Haven Protocol', 'monero_gateway'),
             'manage_woocommerce',
             'monero_gateway',
             array($this, 'orders_page'),
-            MONERO_GATEWAY_PLUGIN_URL.'/assets/images/monero-icon-admin.png',
+            MONERO_GATEWAY_PLUGIN_URL.'/assets/images/haven-icon-admin.png',
             56 // Position on menu, woocommerce has 55.5, products has 55.6
         );
 

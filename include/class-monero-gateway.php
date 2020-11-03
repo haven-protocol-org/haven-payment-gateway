@@ -11,9 +11,9 @@ require_once('class-monero-cryptonote.php');
 class Monero_Gateway extends WC_Payment_Gateway
 {
     private static $_id = 'monero_gateway';
-    private static $_title = 'Monero Gateway';
-    private static $_method_title = 'Monero Gateway';
-    private static $_method_description = 'Monero Gateway Plug-in for WooCommerce.';
+    private static $_title = 'Haven Protocol Gateway';
+    private static $_method_title = 'Haven Protocol Gateway';
+    private static $_method_description = 'Haven Protocol Gateway Plug-in for WooCommerce.';
     private static $_errors = [];
 
     private static $discount = false;
@@ -42,7 +42,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public function get_icon()
     {
-        return apply_filters('woocommerce_gateway_icon', '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/monero-icon.png"/>', $this->id);
+        return apply_filters('woocommerce_gateway_icon', '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-icon.png"/>', $this->id);
     }
 
     function __construct($add_action=true)
@@ -90,14 +90,13 @@ class Monero_Gateway extends WC_Payment_Gateway
         // Add the currency of the shop to $currencies array. Needed for do_update_event() function
         $currency_shop = get_woocommerce_currency();
 		array_push(self::$currencies, $currency_shop);
-        
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
 
         // Initialize helper classes
         self::$cryptonote = new Monero_Cryptonote();
-        if(self::$confirm_type == 'monero-wallet-rpc') {
-            require_once('class-monero-wallet-rpc.php');
+        if(self::$confirm_type == 'haven-wallet-rpc') {
+            require_once('class-haven-wallet-rpc.php');
             self::$monero_wallet_rpc = new Monero_Wallet_Rpc(self::$host, self::$port);
         } else {
             require_once('class-monero-explorer-tools.php');
@@ -153,7 +152,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     public function admin_options()
     {
         $confirm_type = self::$confirm_type;
-        if($confirm_type === 'monero-wallet-rpc')
+        if($confirm_type === 'haven-wallet-rpc')
             $balance = self::admin_balance_info();
 
         $settings_html = $this->generate_settings_html(array(), false);
@@ -173,8 +172,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         $wallet_amount = self::$monero_wallet_rpc->getbalance();
         $height = self::$monero_wallet_rpc->getheight();
         if (!isset($wallet_amount)) {
-            self::$_errors[] = 'Cannot connect to monero-wallet-rpc';
-            self::$log->add('Monero_Payments', '[ERROR] Cannot connect to monero-wallet-rpc');
+            self::$_errors[] = 'Cannot connect to haven-wallet-rpc';
+            self::$log->add('Monero_Payments', '[ERROR] Cannot connect to haven-wallet-rpc');
             return array(
                 'height' => 'Not Available',
                 'balance' => 'Not Available',
@@ -289,7 +288,7 @@ class Monero_Gateway extends WC_Payment_Gateway
         }
 
         // Get current network/wallet height
-        if(self::$confirm_type == 'monero-wallet-rpc')
+        if(self::$confirm_type == 'haven-wallet-rpc')
             $height = self::$monero_wallet_rpc->getheight();
         else
             $height = self::$monero_explorer_tools->getheight();
@@ -325,7 +324,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             $payment_id = self::sanatize_id($quote->payment_id);
             $amount_monero = $quote->amount_total;
 
-            if(self::$confirm_type == 'monero-wallet-rpc')
+            if(self::$confirm_type == 'haven-wallet-rpc')
                 $new_txs = self::check_payment_rpc($payment_id);
             else
                 $new_txs = self::check_payment_explorer($payment_id);
@@ -514,7 +513,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             $address = self::$address;
             $payment_id = self::sanatize_id($details[0]->payment_id);
 
-            if(self::$confirm_type == 'monero-wallet-rpc') {
+            if(self::$confirm_type == 'haven-wallet-rpc') {
                 $integrated_addr = $payment_id;
             } else {
                 if ($address) {
@@ -523,8 +522,8 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $pub_viewkey = $decoded_address['viewkey'];
                     $integrated_addr = self::$cryptonote->integrated_addr_from_keys($pub_spendkey, $pub_viewkey, $payment_id);
                 } else {
-                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Monero address');
-                    return '[ERROR] Merchant has not set Monero address';
+                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Haven Protocol address');
+                    return '[ERROR] Merchant has not set Haven Protocol address';
                 }
             }
 
@@ -552,7 +551,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             }
 
             $amount_formatted = self::format_monero($amount_due);
-            $qrcode_uri = 'monero:'.$address.'?tx_amount='.$amount_formatted.'&tx_payment_id='.$payment_id;
+            $qrcode_uri = 'haven:'.$address.'?tx_amount='.$amount_formatted.'&tx_payment_id='.$payment_id;
             $my_order_url = wc_get_endpoint_url('view-order', $order_id, wc_get_page_permalink('myaccount'));
 
             $payment_details = array(

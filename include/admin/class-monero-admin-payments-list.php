@@ -54,7 +54,7 @@ class Monero_Admin_Payments_List extends WP_List_Table {
             } else {
                 $tab_info['all']['active'] = 'class="current" aria-current="page"';
             }
-            if(Monero_Gateway::get_confirm_type() == 'monero-wallet-rpc') {
+            if(Monero_Gateway::get_confirm_type() == 'haven-wallet-rpc') {
                 $balance = Monero_Gateway::admin_balance_info();
                 $balance_info = <<<HTML
 <div style="border:1px solid #ddd;padding:5px 10px;">
@@ -69,7 +69,7 @@ HTML;
             }
             echo <<<HTML
             <div class="wrap">
-                <h1 class="wp-heading-inline">Monero Payments</h1>
+                <h1 class="wp-heading-inline">Haven Protocol Payments</h1>
                 $balance_info
                 <hr class="wp-header-end">
                 <ul class="subsubsub">
@@ -107,7 +107,7 @@ HTML;
                     </p>
                     $hidden_fields
                 </form>
-                <h2 class="screen-reader-text">Monero Payments List</h2>
+                <h2 class="screen-reader-text">Haven Protocol Payments List</h2>
                 <style>
                     #col_order_id { width: 150px; }
                     #col_payment_id { width: 150px; }
@@ -200,7 +200,7 @@ HTML;
     }
 
     public function no_items() {
-        esc_html_e('No Monero payments found', 'monero_gateway');
+        esc_html_e('No Haven Protocol payments found', 'monero_gateway');
     }
 
     protected function get_filter_vars() {

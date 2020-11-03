@@ -50,7 +50,7 @@ Once you installed and activated WooCommerce, you may install and activate Moner
 * Added the view key option
 
 = 2.1 =
-* Verify transactions without monero-wallet-rpc
+* Verify transactions without haven-wallet-rpc
 * Optionally accept zero confirmation transactions
 * bug fixing
 
@@ -63,7 +63,7 @@ Once you installed and activated WooCommerce, you may install and activate Moner
 = 3.0.0 =
 Huge shoutout to mosu-forge who contributes a lot to make 3.0 possible.
 * Ability to set number of confirms: 0 for zero conf, up to 60.
-* Amount owed in XMR gets locked in after the order for a configurable amount of time after which the order is invalid, default 60 minutes.
+* Amount owed in XHV gets locked in after the order for a configurable amount of time after which the order is invalid, default 60 minutes.
 * Shows transactions received along with the number of confirms right on the order success page, auto-updates through AJAX.
 * QR code generation is done with Javascript instead of sending payment details to a 3rd party.
 * Admin page for showing all transactions made to the wallet.
@@ -85,9 +85,9 @@ Monero is completely private, cryptographically secure, digital cash used across
 * What is a Monero wallet?
 A Monero wallet is a piece of software that allows you to store your funds and interact with the Monero network. You can get a Monero wallet from https://getmonero.org/downloads
 
-* What is monero-wallet-rpc ?
-The monero-wallet-rpc is an RPC server that will allow this plugin to communicate with the Monero network. You can download it from https://getmonero.org/downloads with the command-line tools.
+* What is haven-wallet-rpc ?
+The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Monero network. You can download it from https://getmonero.org/downloads with the command-line tools.
 
-* Why do I see `[ERROR] Failed to connect to monero-wallet-rpc at localhost port 18080
+* Why do I see `[ERROR] Failed to connect to haven-wallet-rpc at localhost port 18080
 Syntax error: Invalid response data structure: Request id: 1 is different from Response id: ` ?
-This is most likely because this plugin can not reach your monero-wallet-rpc. Make sure that you have supplied the correct host IP and port to the plugin in their fields. If your monero-wallet-rpc is on a different server than your wordpress site, make sure that the appropriate port is open with port forwarding enabled.
+This is most likely because this plugin can not reach your haven-wallet-rpc. Make sure that you have supplied the correct host IP and port to the plugin in their fields. If your haven-wallet-rpc is on a different server than your wordpress site, make sure that the appropriate port is open with port forwarding enabled.

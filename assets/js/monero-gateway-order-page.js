@@ -62,7 +62,6 @@ function monero_updateDetails() {
             break;
     }
 
-    jQuery('#monero_exchange_rate').html('1 XMR = '+details.rate_formatted+' '+details.currency);
     jQuery('#monero_total_amount').html(details.amount_total_formatted);
     jQuery('#monero_total_paid').html(details.amount_paid_formatted);
     jQuery('#monero_total_due').html(details.amount_due_formatted);
@@ -87,7 +86,7 @@ function monero_updateDetails() {
                 '<a href="'+monero_explorer_url+'/tx/'+tx.txid+'" target="_blank">'+tx.txid+'</a>'+
                 '</td>'+
                 '<td>'+height+'</td>'+
-                '<td>'+tx.amount_formatted+' Monero</td>'+
+                '<td>'+tx.amount_formatted+' '+tx.currency+'</td>'+
                 '</tr>';
 
             jQuery('#monero_tx_table tbody').append(row);

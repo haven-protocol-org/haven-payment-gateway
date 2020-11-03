@@ -1,5 +1,5 @@
 [Unit]
-Description=Haven Full Node
+Description=Haven Protocol Full Node
 After=network.target
 
 [Service]

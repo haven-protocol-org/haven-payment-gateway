@@ -11,9 +11,9 @@ require_once('class-monero-cryptonote.php');
 class Monero_Gateway extends WC_Payment_Gateway
 {
     private static $_id = 'monero_gateway';
-    private static $_title = 'Monero Gateway';
-    private static $_method_title = 'Monero Gateway';
-    private static $_method_description = 'Monero Gateway Plug-in for WooCommerce.';
+    private static $_title = 'Haven Protocol Gateway';
+    private static $_method_title = 'Haven Protocol Gateway';
+    private static $_method_description = 'Haven Protocol Gateway Plug-in for WooCommerce.';
     private static $_errors = [];
 
     private static $discount = false;
@@ -27,22 +27,19 @@ class Monero_Gateway extends WC_Payment_Gateway
     private static $testnet = false;
     private static $onion_service = false;
     private static $show_qr = false;
-    private static $use_monero_price = false;
-    private static $use_monero_price_decimals = MONERO_GATEWAY_ATOMIC_UNITS;
 
     private static $cryptonote;
     private static $monero_wallet_rpc;
     private static $monero_explorer_tools;
     private static $log;
 
-    private static $currencies = array('BTC','USD','EUR','CAD','INR','GBP','COP','SGD','JPY');
     private static $rates = array();
 
     private static $payment_details = array();
 
     public function get_icon()
     {
-        return apply_filters('woocommerce_gateway_icon', '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/monero-icon.png"/>', $this->id);
+        return apply_filters('woocommerce_gateway_icon', '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-icon.png"/>', $this->id);
     }
 
     function __construct($add_action=true)
@@ -81,23 +78,17 @@ class Monero_Gateway extends WC_Payment_Gateway
         self::$testnet = $this->settings['testnet'] == 'yes';
         self::$onion_service = $this->settings['onion_service'] == 'yes';
         self::$show_qr = $this->settings['show_qr'] == 'yes';
-        self::$use_monero_price = $this->settings['use_monero_price'] == 'yes';
-        self::$use_monero_price_decimals = $this->settings['use_monero_price_decimals'];
 
         $explorer_url = self::$testnet ? MONERO_GATEWAY_TESTNET_EXPLORER_URL : MONERO_GATEWAY_MAINNET_EXPLORER_URL;
         defined('MONERO_GATEWAY_EXPLORER_URL') || define('MONERO_GATEWAY_EXPLORER_URL', $explorer_url);
 
-        // Add the currency of the shop to $currencies array. Needed for do_update_event() function
-        $currency_shop = get_woocommerce_currency();
-		array_push(self::$currencies, $currency_shop);
-        
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
 
         // Initialize helper classes
         self::$cryptonote = new Monero_Cryptonote();
-        if(self::$confirm_type == 'monero-wallet-rpc') {
-            require_once('class-monero-wallet-rpc.php');
+        if(self::$confirm_type == 'haven-wallet-rpc') {
+            require_once('class-haven-wallet-rpc.php');
             self::$monero_wallet_rpc = new Monero_Wallet_Rpc(self::$host, self::$port);
         } else {
             require_once('class-monero-explorer-tools.php');
@@ -115,10 +106,10 @@ class Monero_Gateway extends WC_Payment_Gateway
     public function validate_monero_address_field($key,$address)
     {
         if($this->settings['confirm_type'] == 'viewkey') {
-            if (strlen($address) == 95 && substr($address, 0, 1) == '4')
+            if (strlen($address) == 98 && substr($address, 0, 2) == 'hv')
                 if(self::$cryptonote->verify_checksum($address))
                     return $address;
-            self::$_errors[] = 'Monero address is invalid';
+            self::$_errors[] = 'Haven Protocol address is invalid';
         }
         return $address;
     }
@@ -153,7 +144,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     public function admin_options()
     {
         $confirm_type = self::$confirm_type;
-        if($confirm_type === 'monero-wallet-rpc')
+        if($confirm_type === 'haven-wallet-rpc')
             $balance = self::admin_balance_info();
 
         $settings_html = $this->generate_settings_html(array(), false);
@@ -173,8 +164,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         $wallet_amount = self::$monero_wallet_rpc->getbalance();
         $height = self::$monero_wallet_rpc->getheight();
         if (!isset($wallet_amount)) {
-            self::$_errors[] = 'Cannot connect to monero-wallet-rpc';
-            self::$log->add('Monero_Payments', '[ERROR] Cannot connect to monero-wallet-rpc');
+            self::$_errors[] = 'Cannot connect to haven-wallet-rpc';
+            self::$log->add('Monero_Payments', '[ERROR] Cannot connect to haven-wallet-rpc');
             return array(
                 'height' => 'Not Available',
                 'balance' => 'Not Available',
@@ -183,8 +174,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         } else {
             return array(
                 'height' => $height,
-                'balance' => self::format_monero($wallet_amount['balance']).' Monero',
-                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Monero'
+                'balance' => self::format_monero($wallet_amount['balance']).' Haven',
+                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Haven'
             );
         }
     }
@@ -208,12 +199,12 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public function process_payment($order_id)
     {
-        global $wpdb;
-        $table_name = $wpdb->prefix.'monero_gateway_quotes';
+        global $wpdb, $xAssetSelected;
+        $table_name = $wpdb->prefix.'haven_gateway_quotes';
 
         $order = wc_get_order($order_id);
 
-        if(self::$confirm_type != 'monero-wallet-rpc') {
+        if(self::$confirm_type != 'haven-wallet-rpc') {
           // Generate a unique payment id
           do {
               $payment_id = bin2hex(openssl_random_pseudo_bytes(8));
@@ -232,17 +223,14 @@ class Monero_Gateway extends WC_Payment_Gateway
           }
         }
 
-        $currency = $order->get_currency();
-        $rate = self::get_live_rate($currency);
-        $fiat_amount = $order->get_total('');
-        $monero_amount = 1e8 * $fiat_amount / $rate;
+        $monero_amount = $order->get_total(''); //TODO Is this the right amount????
 
         if(self::$discount)
             $monero_amount = $monero_amount - $monero_amount * self::$discount / 100;
 
         $monero_amount = intval($monero_amount * MONERO_GATEWAY_ATOMIC_UNITS_POW);
 
-        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $currency, $rate, $monero_amount));
+        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $monero_amount));
         $wpdb->query($query);
 
         $order->update_status('on-hold', __('Awaiting offline payment', 'monero_gateway'));
@@ -263,43 +251,19 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
 
-        // Get Live Price
-        $currencies = implode(',', self::$currencies);
-        $api_link = 'https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms='.$currencies.'&extraParams=monero_woocommerce';
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $api_link,
-        ));
-        $resp = curl_exec($curl);
-        curl_close($curl);
-        $price = json_decode($resp, true);
-
-        if(!isset($price['Response']) || $price['Response'] != 'Error') {
-            $table_name = $wpdb->prefix.'monero_gateway_live_rates';
-            foreach($price as $currency=>$rate) {
-                // shift decimal eight places for precise int storage
-                $rate = intval($rate * 1e8);
-                $query = $wpdb->prepare("INSERT INTO $table_name (currency, rate, updated) VALUES (%s, %d, NOW()) ON DUPLICATE KEY UPDATE rate=%d, updated=NOW()", array($currency, $rate, $rate));
-                $wpdb->query($query);
-            }
-        }
-        else{
-             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from cryptocompare.com.");
-        }
-
         // Get current network/wallet height
-        if(self::$confirm_type == 'monero-wallet-rpc')
+        if(self::$confirm_type == 'haven-wallet-rpc')
             $height = self::$monero_wallet_rpc->getheight();
         else
             $height = self::$monero_explorer_tools->getheight();
         set_transient('monero_gateway_network_height', $height);
 
         // Get pending payments
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());
+
         $rows = $wpdb->get_results($query);
 
         $pending_payments = array();
@@ -325,7 +289,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             $payment_id = self::sanatize_id($quote->payment_id);
             $amount_monero = $quote->amount_total;
 
-            if(self::$confirm_type == 'monero-wallet-rpc')
+            if(self::$confirm_type == 'haven-wallet-rpc')
                 $new_txs = self::check_payment_rpc($payment_id);
             else
                 $new_txs = self::check_payment_explorer($payment_id);
@@ -333,7 +297,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             foreach($new_txs as $new_tx) {
                 $is_new_tx = true;
                 foreach($old_txs as $old_tx) {
-                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid) {
+                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid && $new_tx['currency'] == $old_tx->currency) {
                         $is_new_tx = false;
                         break;
                     }
@@ -342,7 +306,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $old_txs[] = (object) $new_tx;
                 }
 
-                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, amount, height) VALUES (%s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
+                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['currency'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
                 $wpdb->query($query);
             }
 
@@ -350,7 +314,9 @@ class Monero_Gateway extends WC_Payment_Gateway
             $heights = array();
             $amount_paid = 0;
             foreach($txs as $tx) {
-                $amount_paid += $tx->amount;
+                if($quote->currency == $tx->currency){
+                  $amount_paid += $tx->amount;
+                }
                 $heights[] = $tx->height;
             }
 
@@ -372,7 +338,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             }
 
             if($paid && $confirmed) {
-                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id");
+                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id (currency: $quote->currency)");
                 $query = $wpdb->prepare("UPDATE $table_name_1 SET confirmed=1,paid=1,pending=0 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 
@@ -424,6 +390,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['in'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -433,6 +400,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['pool'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -449,6 +417,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             if($payment['payment_id'] == $payment_id) {
                 $txs[] = array(
                     'amount' => $payment['amount'],
+                    'currency' => $payment['currency'],
                     'txid' => $payment['tx_hash'],
                     'height' => $payment['block_no']
                 );
@@ -466,9 +435,9 @@ class Monero_Gateway extends WC_Payment_Gateway
             return self::$payment_details[$order_id];
 
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
-        $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
+        $query = $wpdb->prepare("SELECT *, $table_name_1.currency as currency, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
             $txs = array();
@@ -480,6 +449,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                 $txs[] = array(
                     'txid' => $tx->txid,
                     'height' => $tx->height,
+                    'currency' => $tx->currency,
                     'amount' => $tx->amount_paid,
                     'amount_formatted' => self::format_monero($tx->amount_paid)
                 );
@@ -514,7 +484,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             $address = self::$address;
             $payment_id = self::sanatize_id($details[0]->payment_id);
 
-            if(self::$confirm_type == 'monero-wallet-rpc') {
+            if(self::$confirm_type == 'haven-wallet-rpc') {
                 $integrated_addr = $payment_id;
             } else {
                 if ($address) {
@@ -523,8 +493,8 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $pub_viewkey = $decoded_address['viewkey'];
                     $integrated_addr = self::$cryptonote->integrated_addr_from_keys($pub_spendkey, $pub_viewkey, $payment_id);
                 } else {
-                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Monero address');
-                    return '[ERROR] Merchant has not set Monero address';
+                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Haven Protocol address');
+                    return '[ERROR] Merchant has not set Haven Protocol address';
                 }
             }
 
@@ -552,7 +522,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             }
 
             $amount_formatted = self::format_monero($amount_due);
-            $qrcode_uri = 'monero:'.$address.'?tx_amount='.$amount_formatted.'&tx_payment_id='.$payment_id;
+            $qrcode_uri = 'haven:'.$address.'?tx_amount='.$amount_formatted.'&tx_payment_id='.$payment_id;
             $my_order_url = wc_get_endpoint_url('view-order', $order_id, wc_get_page_permalink('myaccount'));
 
             $payment_details = array(
@@ -690,74 +660,6 @@ class Monero_Gateway extends WC_Payment_Gateway
     public static function use_qr_code()
     {
         return self::$show_qr;
-    }
-
-    public static function use_monero_price()
-    {
-        return self::$use_monero_price;
-    }
-
-
-    public static function convert_wc_price($price, $currency)
-    {
-        $rate = self::get_live_rate($currency);
-        $monero_amount = intval(MONERO_GATEWAY_ATOMIC_UNITS_POW * 1e8 * $price / $rate) / MONERO_GATEWAY_ATOMIC_UNITS_POW;
-        $monero_amount_formatted = sprintf('%.'.self::$use_monero_price_decimals.'f', $monero_amount);
-
-        return <<<HTML
-            <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
-        data-rate="$rate" data-rate-type="live">
-            $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
-        </span>
-
-HTML;
-    }
-
-    public static function convert_wc_price_order($price_html, $order)
-    {
-        if($order->get_payment_method() != self::$_id)
-            return $price_html;
-
-        $order_id = $order->get_id();
-        $payment_details = self::get_payment_details($order_id);
-        if(!is_array($payment_details))
-            return $price_html;
-
-        // Experimental regex, may fail with other custom price formatters
-        $match_ok = preg_match('/data-price="([^"]*)"/', $price_html, $matches);
-        if($match_ok !== 1) // regex failed
-            return $price_html;
-
-        $price = array_pop($matches);
-        $currency = $payment_details['currency'];
-        $rate = $payment_details['rate'];
-        $monero_amount = intval(MONERO_GATEWAY_ATOMIC_UNITS_POW * 1e8 * $price / $rate) / MONERO_GATEWAY_ATOMIC_UNITS_POW;
-        $monero_amount_formatted = sprintf('%.'.MONERO_GATEWAY_ATOMIC_UNITS.'f', $monero_amount);
-
-        return <<<HTML
-            <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
-        data-rate="$rate" data-rate-type="fixed">
-            $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
-        </span>
-
-HTML;
-    }
-
-    public static function get_live_rate($currency)
-    {
-        if(isset(self::$rates[$currency]))
-            return self::$rates[$currency];
-
-        global $wpdb;
-        $table_name = $wpdb->prefix.'monero_gateway_live_rates';
-        $query = $wpdb->prepare("SELECT rate FROM $table_name WHERE currency=%s", array($currency));
-
-        $rate = $wpdb->get_row($query)->rate;
-        self::$rates[$currency] = $rate;
-
-        return $rate;
     }
 
     protected static function sanatize_id($payment_id)

@@ -54,7 +54,7 @@ class Monero_Admin_Payments_List extends WP_List_Table {
             } else {
                 $tab_info['all']['active'] = 'class="current" aria-current="page"';
             }
-            if(Monero_Gateway::get_confirm_type() == 'monero-wallet-rpc') {
+            if(Monero_Gateway::get_confirm_type() == 'haven-wallet-rpc') {
                 $balance = Monero_Gateway::admin_balance_info();
                 $balance_info = <<<HTML
 <div style="border:1px solid #ddd;padding:5px 10px;">
@@ -69,7 +69,7 @@ HTML;
             }
             echo <<<HTML
             <div class="wrap">
-                <h1 class="wp-heading-inline">Monero Payments</h1>
+                <h1 class="wp-heading-inline">Haven Protocol Payments</h1>
                 $balance_info
                 <hr class="wp-header-end">
                 <ul class="subsubsub">
@@ -107,7 +107,7 @@ HTML;
                     </p>
                     $hidden_fields
                 </form>
-                <h2 class="screen-reader-text">Monero Payments List</h2>
+                <h2 class="screen-reader-text">Haven Protocol Payments List</h2>
                 <style>
                     #col_order_id { width: 150px; }
                     #col_payment_id { width: 150px; }
@@ -145,7 +145,7 @@ HTML;
             echo $item->height;
             break;
         case 'col_amount':
-            echo Monero_Gateway::format_monero($item->amount).' Monero';
+            echo Monero_Gateway::format_monero($item->amount).' '.$item->currency;
             break;
         }
     }
@@ -200,7 +200,7 @@ HTML;
     }
 
     public function no_items() {
-        esc_html_e('No Monero payments found', 'monero_gateway');
+        esc_html_e('No Haven Protocol payments found', 'monero_gateway');
     }
 
     protected function get_filter_vars() {
@@ -212,8 +212,8 @@ HTML;
 
     protected function get_item_count($type) {
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
         $query_where = ' WHERE 1=1 '.$this->get_clause_type($type);
         $query = "SELECT COUNT(*) AS count FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where}";
         $item_count = $wpdb->get_var($query);
@@ -249,8 +249,8 @@ HTML;
         $this->items = array();
         $filters = $this->get_filter_vars();
 
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query_where = ' WHERE 1=1 ';
 
@@ -258,7 +258,7 @@ HTML;
 
         $query_order = $wpdb->prepare('ORDER BY id DESC LIMIT %d, %d;', ($current_page-1)*$per_page, $per_page);
 
-        $query = "SELECT t1.order_id, t1.confirmed, t1.paid, t1.pending, t2.* FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where} {$query_order}";
+        $query = "SELECT t1.order_id, t1.confirmed, t1.paid, t1.pending, t1.currency, t2.* FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where} {$query_order}";
 
         $this->items = $wpdb->get_results($query);
 

@@ -4,7 +4,7 @@
     <?php echo $method_title ?>
 </h2>
 
-<p style="margin: 0 0 16px;">Your order has been confirmed. Thank you for paying with Monero!</p>
+<p style="margin: 0 0 16px;">Your order has been confirmed. Thank you for paying with Haven!</p>
 
 <?php elseif($details['status'] == 'expired' || $details['status'] == 'expired_partial'): ?>
 
@@ -37,7 +37,7 @@
                 <td class="td" style="text-align: left; vertical-align: middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; word-wrap: break-word; color: #636363; border: 1px solid #e5e5e5; padding: 12px;">
                     TOTAL DUE: <br/>
                     <strong>
-                        <?php echo $details['amount_total_formatted']; ?> XMR
+                        <?php echo $details['amount_total_formatted']; ?> XHV
                     </strong>
                 </td>
             </tr>
@@ -45,7 +45,7 @@
                 <td class="td" style="text-align: left; vertical-align: middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; word-wrap: break-word; color: #636363; border: 1px solid #e5e5e5; padding: 12px;">
                     EXCHANGE RATE: <br/>
                     <strong>
-                        1 XMR = <?php echo $details['rate_formatted'] . ' ' . $details['currency']; ?>
+                        1 XHV = <?php echo $details['rate_formatted'] . ' ' . $details['currency']; ?>
                     </strong>
                 </td>
             </tr>

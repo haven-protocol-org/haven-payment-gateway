@@ -27,15 +27,12 @@ class Monero_Gateway extends WC_Payment_Gateway
     private static $testnet = false;
     private static $onion_service = false;
     private static $show_qr = false;
-    private static $use_monero_price = false;
-    private static $use_monero_price_decimals = MONERO_GATEWAY_ATOMIC_UNITS;
 
     private static $cryptonote;
     private static $monero_wallet_rpc;
     private static $monero_explorer_tools;
     private static $log;
 
-    private static $currencies = array('BTC','USD','EUR','CAD','INR','GBP','COP','SGD','JPY');
     private static $rates = array();
 
     private static $payment_details = array();
@@ -85,9 +82,6 @@ class Monero_Gateway extends WC_Payment_Gateway
         $explorer_url = self::$testnet ? MONERO_GATEWAY_TESTNET_EXPLORER_URL : MONERO_GATEWAY_MAINNET_EXPLORER_URL;
         defined('MONERO_GATEWAY_EXPLORER_URL') || define('MONERO_GATEWAY_EXPLORER_URL', $explorer_url);
 
-        // Add the currency of the shop to $currencies array. Needed for do_update_event() function
-        $currency_shop = get_woocommerce_currency();
-		array_push(self::$currencies, $currency_shop);
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
 
@@ -180,8 +174,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         } else {
             return array(
                 'height' => $height,
-                'balance' => self::format_monero($wallet_amount['balance']).' Monero',
-                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Monero'
+                'balance' => self::format_monero($wallet_amount['balance']).' Haven',
+                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Haven'
             );
         }
     }
@@ -229,11 +223,6 @@ class Monero_Gateway extends WC_Payment_Gateway
           }
         }
 
-        //$currency = $order->get_currency();
-        //$rate = self::get_live_rate($currency);
-        //$fiat_amount = $order->get_total('');
-        //$monero_amount = 1e8 * $fiat_amount / $rate;
-
         $monero_amount = $order->get_total(''); //TODO Is this the right amount????
 
         if(self::$discount)
@@ -262,34 +251,6 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
 
-
-        /* Not neeeded atm
-        // Get Live Price (XHV prices only)
-        $api_link = 'https://oracle.havenprotocol.org/';
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $api_link,
-        ));
-        $resp = curl_exec($curl);
-        curl_close($curl);
-        $price = json_decode($resp, true);
-
-        if(!isset($price['Response']) || $price['Response'] != 'Error') {
-            $table_name = $wpdb->prefix.'haven_gateway_live_rates';
-            foreach(self::$currencies as $currency){
-                $rate = $price['pr']['x'.$currency];
-                // shift decimal eight places for precise int storage
-                $rate = intval($rate/1000000000000 * 1e8);
-                $query = $wpdb->prepare("INSERT INTO $table_name (currency, rate, updated) VALUES (%s, %d, NOW()) ON DUPLICATE KEY UPDATE rate=%d, updated=NOW()", array($currency, $rate, $rate));
-                $wpdb->query($query);
-            }
-        }
-        else{
-             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from oracle.havenprotocol.org.");
-        }
-        */
-
         // Get current network/wallet height
         if(self::$confirm_type == 'haven-wallet-rpc')
             $height = self::$monero_wallet_rpc->getheight();
@@ -298,9 +259,11 @@ class Monero_Gateway extends WC_Payment_Gateway
         set_transient('monero_gateway_network_height', $height);
 
         // Get pending payments
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());
+
         $rows = $wpdb->get_results($query);
 
         $pending_payments = array();

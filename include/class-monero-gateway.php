@@ -274,8 +274,9 @@ class Monero_Gateway extends WC_Payment_Gateway
         $price = json_decode($resp, true);
 
         if(!isset($price['Response']) || $price['Response'] != 'Error') {
-            $table_name = $wpdb->prefix.'monero_gateway_live_rates';
-            foreach($price as $currency=>$rate) {
+            $table_name = $wpdb->prefix.'haven_gateway_live_rates';
+            foreach(self::$currencies as $currency){
+                $rate = $price['pr']['x'.$currency];
                 // shift decimal eight places for precise int storage
                 $rate = intval($rate * 1e8);
                 $query = $wpdb->prepare("INSERT INTO $table_name (currency, rate, updated) VALUES (%s, %d, NOW()) ON DUPLICATE KEY UPDATE rate=%d, updated=NOW()", array($currency, $rate, $rate));
@@ -330,7 +331,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             foreach($new_txs as $new_tx) {
                 $is_new_tx = true;
                 foreach($old_txs as $old_tx) {
-                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid) {
+                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid && $new_tx['currency'] == $old_tx->currency) {
                         $is_new_tx = false;
                         break;
                     }
@@ -339,7 +340,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $old_txs[] = (object) $new_tx;
                 }
 
-                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, amount, height) VALUES (%s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
+                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['currency'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
                 $wpdb->query($query);
             }
 
@@ -347,7 +348,9 @@ class Monero_Gateway extends WC_Payment_Gateway
             $heights = array();
             $amount_paid = 0;
             foreach($txs as $tx) {
-                $amount_paid += $tx->amount;
+                if($quote->currency == $tx->currency){
+                  $amount_paid += $tx->amount;
+                }
                 $heights[] = $tx->height;
             }
 
@@ -421,6 +424,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['in'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -430,6 +434,7 @@ class Monero_Gateway extends WC_Payment_Gateway
           foreach($payments['pool'] as $payment) {
               $txs[] = array(
                   'amount' => $payment['amount'],
+                  'currency' => $payment['currency'],
                   'txid' => $payment['txid'],
                   'height' => $payment['height']
               );
@@ -446,6 +451,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             if($payment['payment_id'] == $payment_id) {
                 $txs[] = array(
                     'amount' => $payment['amount'],
+                    'currency' => $payment['currency'],
                     'txid' => $payment['tx_hash'],
                     'height' => $payment['block_no']
                 );
@@ -465,7 +471,6 @@ class Monero_Gateway extends WC_Payment_Gateway
         global $wpdb;
         $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
         $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
-        $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
             $txs = array();
@@ -477,6 +482,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                 $txs[] = array(
                     'txid' => $tx->txid,
                     'height' => $tx->height,
+                    'currency' => $tx->currency,
                     'amount' => $tx->amount_paid,
                     'amount_formatted' => self::format_monero($tx->amount_paid)
                 );

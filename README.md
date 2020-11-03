@@ -1,6 +1,6 @@
 # WARNING USE AT OWN RISK!
 
-* Still in dev fase
+* Still in dev phase
 * RPC commands not tested yet
 
 # Haven Protocol Gateway for WooCommerce

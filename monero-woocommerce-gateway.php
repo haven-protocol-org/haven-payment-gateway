@@ -21,6 +21,30 @@ define('MONERO_GATEWAY_ATOMIC_UNITS', 12);
 define('MONERO_GATEWAY_ATOMIC_UNIT_THRESHOLD', 10); // Amount under in atomic units payment is valid
 define('MONERO_GATEWAY_DIFFICULTY_TARGET', 120);
 
+define('HAVEN_XASSETS',
+[
+  'xUSD' =>
+  [
+    'symbol' => '$',
+    'wc'     => 'USD'
+  ],
+  'xEUR' =>
+  [
+    'symbol' => '€',
+    'wc'     => 'EUR'
+  ],
+  'xCNY' =>
+  [
+    'symbol' => '¥',
+    'wc'     => 'CNY'
+  ],
+  'xGOLD' =>
+  [
+    'symbol' => 'G',
+    'wc'     => 'GOLD'
+  ]
+]
+);
 // Do not edit these constants
 define('MONERO_GATEWAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MONERO_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));

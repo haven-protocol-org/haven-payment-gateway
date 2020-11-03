@@ -262,9 +262,10 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
 
-        // Get Live Price
-        $currencies = implode(',', self::$currencies);
-        $api_link = 'https://min-api.cryptocompare.com/data/price?fsym=XMR&tsyms='.$currencies.'&extraParams=monero_woocommerce';
+
+        /* Not neeeded atm
+        // Get Live Price (XHV prices only)
+        $api_link = 'https://oracle.havenprotocol.org/';
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_RETURNTRANSFER => 1,

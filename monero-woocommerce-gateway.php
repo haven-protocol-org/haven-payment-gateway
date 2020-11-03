@@ -185,6 +185,7 @@ function monero_install() {
                payment_id VARCHAR(95) DEFAULT '' NOT NULL,
                txid VARCHAR(64) DEFAULT '' NOT NULL,
                amount BIGINT UNSIGNED DEFAULT 0 NOT NULL,
+               currency VARCHAR(20) DEFAULT '' NOT NULL,
                height MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                PRIMARY KEY (id),
                UNIQUE KEY (payment_id, txid, amount)

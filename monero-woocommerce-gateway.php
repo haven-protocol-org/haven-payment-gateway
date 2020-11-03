@@ -100,62 +100,15 @@ function monero_init() {
 
     add_filter('woocommerce_currencies', 'monero_add_currency');
     function monero_add_currency($currencies) {
-        $currencies['Monero'] = __('Monero', 'monero_gateway');
         return $currencies;
     }
 
     add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
     function monero_add_currency_symbol($currency_symbol, $currency) {
-        switch ($currency) {
-        case 'Haven USD':
-            $currency_symbol = 'xUSD';
-            break;
-        }
-        return $currency_symbol;
-    }
-
-    if(Monero_Gateway::use_monero_price()) {
-
-        // This filter will replace all prices with amount in Monero (live rates)
-        add_filter('wc_price', 'monero_live_price_format', 10, 3);
-        function monero_live_price_format($price_html, $price_float, $args) {
-            if(!isset($args['currency']) || !$args['currency']) {
-                global $woocommerce;
-                $currency = strtoupper(get_woocommerce_currency());
-            } else {
-                $currency = strtoupper($args['currency']);
-            }
-            return Monero_Gateway::convert_wc_price($price_float, $currency);
-        }
-
-        // These filters will replace the live rate with the exchange rate locked in for the order
-        // We must be careful to hit all the hooks for price displays associated with an order,
-        // else the exchange rate can change dynamically (which it should for an order)
-        add_filter('woocommerce_order_formatted_line_subtotal', 'monero_order_item_price_format', 10, 3);
-        function monero_order_item_price_format($price_html, $item, $order) {
-            return Monero_Gateway::convert_wc_price_order($price_html, $order);
-        }
-
-        add_filter('woocommerce_get_formatted_order_total', 'monero_order_total_price_format', 10, 2);
-        function monero_order_total_price_format($price_html, $order) {
-            return Monero_Gateway::convert_wc_price_order($price_html, $order);
-        }
-
-        add_filter('woocommerce_get_order_item_totals', 'monero_order_totals_price_format', 10, 3);
-        function monero_order_totals_price_format($total_rows, $order, $tax_display) {
-            foreach($total_rows as &$row) {
-                $price_html = $row['value'];
-                $row['value'] = Monero_Gateway::convert_wc_price_order($price_html, $order);
-            }
-            return $total_rows;
-        }
-
     }
 
     add_action('wp_enqueue_scripts', 'monero_enqueue_scripts');
     function monero_enqueue_scripts() {
-        if(Monero_Gateway::use_monero_price())
-            wp_dequeue_script('wc-cart-fragments');
         if(Monero_Gateway::use_qr_code())
             wp_enqueue_script('monero-qr-code', MONERO_GATEWAY_PLUGIN_URL.'assets/js/qrcode.min.js');
 
@@ -163,27 +116,6 @@ function monero_init() {
         wp_enqueue_script('monero-gateway', MONERO_GATEWAY_PLUGIN_URL.'assets/js/monero-gateway-order-page.js');
         wp_enqueue_style('monero-gateway', MONERO_GATEWAY_PLUGIN_URL.'assets/css/monero-gateway-order-page.css');
     }
-
-    // [monero-price currency="USD"]
-    // currency: BTC, GBP, etc
-    // if no none, then default store currency
-    function monero_price_func( $atts ) {
-        global  $woocommerce;
-        $a = shortcode_atts( array(
-            'currency' => get_woocommerce_currency()
-        ), $atts );
-
-        $currency = strtoupper($a['currency']);
-        $rate = Monero_Gateway::get_live_rate($currency);
-        if($currency == 'BTC')
-            $rate_formatted = sprintf('%.8f', $rate / 1e8);
-        else
-            $rate_formatted = sprintf('%.5f', $rate / 1e8);
-
-        return "<span class=\"monero-price\">1 XMR = $rate_formatted $currency</span>";
-    }
-    add_shortcode('monero-price', 'monero_price_func');
-
 
     // [monero-accepted-here]
     function monero_accepted_func() {

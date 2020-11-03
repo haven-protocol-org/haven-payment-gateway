@@ -34,16 +34,9 @@ function moneroUpdateFields() {
         jQuery("#woocommerce_monero_gateway_daemon_host").closest("tr").hide();
         jQuery("#woocommerce_monero_gateway_daemon_port").closest("tr").hide();
     }
-    var useMoneroPrices = jQuery("#woocommerce_monero_gateway_use_monero_price").is(":checked");
-    if(useMoneroPrices) {
-        jQuery("#woocommerce_monero_gateway_use_monero_price_decimals").closest("tr").show();
-    } else {
-        jQuery("#woocommerce_monero_gateway_use_monero_price_decimals").closest("tr").hide();
-    }
 }
 moneroUpdateFields();
 jQuery("#woocommerce_monero_gateway_confirm_type").change(moneroUpdateFields);
-jQuery("#woocommerce_monero_gateway_use_monero_price").change(moneroUpdateFields);
 </script>
 
 <style>

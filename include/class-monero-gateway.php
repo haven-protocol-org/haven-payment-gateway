@@ -81,8 +81,6 @@ class Monero_Gateway extends WC_Payment_Gateway
         self::$testnet = $this->settings['testnet'] == 'yes';
         self::$onion_service = $this->settings['onion_service'] == 'yes';
         self::$show_qr = $this->settings['show_qr'] == 'yes';
-        self::$use_monero_price = $this->settings['use_monero_price'] == 'yes';
-        self::$use_monero_price_decimals = $this->settings['use_monero_price_decimals'];
 
         $explorer_url = self::$testnet ? MONERO_GATEWAY_TESTNET_EXPLORER_URL : MONERO_GATEWAY_MAINNET_EXPLORER_URL;
         defined('MONERO_GATEWAY_EXPLORER_URL') || define('MONERO_GATEWAY_EXPLORER_URL', $explorer_url);
@@ -231,10 +229,10 @@ class Monero_Gateway extends WC_Payment_Gateway
           }
         }
 
-        $currency = $order->get_currency();
-        $rate = self::get_live_rate($currency);
-        $fiat_amount = $order->get_total('');
-        $monero_amount = 1e8 * $fiat_amount / $rate;
+        //$currency = $order->get_currency();
+        //$rate = self::get_live_rate($currency);
+        //$fiat_amount = $order->get_total('');
+        //$monero_amount = 1e8 * $fiat_amount / $rate;
 
         if(self::$discount)
             $monero_amount = $monero_amount - $monero_amount * self::$discount / 100;

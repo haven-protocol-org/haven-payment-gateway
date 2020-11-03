@@ -205,8 +205,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public function process_payment($order_id)
     {
-        global $wpdb;
-        $table_name = $wpdb->prefix.'monero_gateway_quotes';
+        global $wpdb, $xAssetSelected;
         $table_name = $wpdb->prefix.'haven_gateway_quotes';
 
         $order = wc_get_order($order_id);
@@ -235,12 +234,14 @@ class Monero_Gateway extends WC_Payment_Gateway
         //$fiat_amount = $order->get_total('');
         //$monero_amount = 1e8 * $fiat_amount / $rate;
 
+        $monero_amount = $order->get_total(''); //TODO Is this the right amount????
+
         if(self::$discount)
             $monero_amount = $monero_amount - $monero_amount * self::$discount / 100;
 
         $monero_amount = intval($monero_amount * MONERO_GATEWAY_ATOMIC_UNITS_POW);
 
-        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $currency, $rate, $monero_amount));
+        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $monero_amount));
         $wpdb->query($query);
 
         $order->update_status('on-hold', __('Awaiting offline payment', 'monero_gateway'));
@@ -278,14 +279,15 @@ class Monero_Gateway extends WC_Payment_Gateway
             foreach(self::$currencies as $currency){
                 $rate = $price['pr']['x'.$currency];
                 // shift decimal eight places for precise int storage
-                $rate = intval($rate * 1e8);
+                $rate = intval($rate/1000000000000 * 1e8);
                 $query = $wpdb->prepare("INSERT INTO $table_name (currency, rate, updated) VALUES (%s, %d, NOW()) ON DUPLICATE KEY UPDATE rate=%d, updated=NOW()", array($currency, $rate, $rate));
                 $wpdb->query($query);
             }
         }
         else{
-             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from cryptocompare.com.");
+             self::$log->add('Monero_Payments', "[ERROR] Unable to fetch prices from oracle.havenprotocol.org.");
         }
+        */
 
         // Get current network/wallet height
         if(self::$confirm_type == 'haven-wallet-rpc')
@@ -469,8 +471,9 @@ class Monero_Gateway extends WC_Payment_Gateway
             return self::$payment_details[$order_id];
 
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
+        $query = $wpdb->prepare("SELECT *, $table_name_1.currency as currency, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
             $txs = array();

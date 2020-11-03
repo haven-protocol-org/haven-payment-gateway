@@ -45,11 +45,14 @@ define('HAVEN_XASSETS',
   ]
 ]
 );
+
 // Do not edit these constants
 define('MONERO_GATEWAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('MONERO_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('MONERO_GATEWAY_ATOMIC_UNITS_POW', pow(10, MONERO_GATEWAY_ATOMIC_UNITS));
 define('MONERO_GATEWAY_ATOMIC_UNITS_SPRINTF', '%.'.MONERO_GATEWAY_ATOMIC_UNITS.'f');
+
+$xAssetSelected = "";
 
 // Include our Gateway Class and register Payment Gateway with WooCommerce
 add_action('plugins_loaded', 'monero_init', 1);
@@ -72,6 +75,40 @@ function monero_init() {
         $methods[] = 'Monero_Gateway';
         return $methods;
     }
+
+
+  add_filter( 'woocommerce_available_payment_gateways', 'haven_unset_gateway_if_unused' );
+
+  function haven_unset_gateway_if_unused( $available_gateways ) {
+      global $xAssetSelected;
+      if ( is_admin() ) return $available_gateways;
+      if ( ! is_checkout() ) return $available_gateways;
+      $unset = true;
+      $selected_currency = get_woocommerce_currency();
+
+      foreach(HAVEN_XASSETS as $xAsset => $options){
+        //Ony be able to activate when xAsset = xAsset OR if xAsset = (x)Asset
+        if($xAsset == $selected_currency || $options['wc'] == $selected_currency){
+          $xAssetSelected = $xAsset;
+          $unset = false;
+          break;
+        }
+      }
+
+      if($unset){
+        unset( $available_gateways['monero_gateway'] );
+      }
+      return $available_gateways;
+  }
+
+  add_filter( 'woocommerce_gateway_title', 'change_cheque_payment_gateway_title', 100, 2 );
+  function change_cheque_payment_gateway_title( $title, $payment_id ){
+      global $xAssetSelected;
+      if( $payment_id === 'monero_gateway' ) {
+          $title = __($title." ($".$xAssetSelected.")", "woocommerce");
+      }
+      return $title;
+  }
 
     add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'monero_payment');
     function monero_payment($links) {
@@ -122,13 +159,22 @@ function monero_init() {
         Monero_Gateway::get_payment_details_ajax();
     }
 
+    //Add them to the choice list of currency in admin
     add_filter('woocommerce_currencies', 'monero_add_currency');
     function monero_add_currency($currencies) {
+        foreach(HAVEN_XASSETS as $xAsset => $options){
+          $currencies[$xAsset] = __($xAsset, 'monero_gateway');
+        }
+
         return $currencies;
     }
 
     add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
     function monero_add_currency_symbol($currency_symbol, $currency) {
+      if(!empty(HAVEN_XASSETS[$currency]['symbol'])){
+        $currency_symbol = HAVEN_XASSETS[$currency]['symbol'];
+      }
+      return $currency_symbol;
     }
 
     add_action('wp_enqueue_scripts', 'monero_enqueue_scripts');

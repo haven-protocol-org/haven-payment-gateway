@@ -210,7 +210,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
         $order = wc_get_order($order_id);
 
-        if(self::$confirm_type != 'monero-wallet-rpc') {
+        if(self::$confirm_type != 'haven-wallet-rpc') {
           // Generate a unique payment id
           do {
               $payment_id = bin2hex(openssl_random_pseudo_bytes(8));
@@ -696,74 +696,6 @@ class Monero_Gateway extends WC_Payment_Gateway
     public static function use_qr_code()
     {
         return self::$show_qr;
-    }
-
-    public static function use_monero_price()
-    {
-        return self::$use_monero_price;
-    }
-
-
-    public static function convert_wc_price($price, $currency)
-    {
-        $rate = self::get_live_rate($currency);
-        $monero_amount = intval(MONERO_GATEWAY_ATOMIC_UNITS_POW * 1e8 * $price / $rate) / MONERO_GATEWAY_ATOMIC_UNITS_POW;
-        $monero_amount_formatted = sprintf('%.'.self::$use_monero_price_decimals.'f', $monero_amount);
-
-        return <<<HTML
-            <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
-        data-rate="$rate" data-rate-type="live">
-            $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
-        </span>
-
-HTML;
-    }
-
-    public static function convert_wc_price_order($price_html, $order)
-    {
-        if($order->get_payment_method() != self::$_id)
-            return $price_html;
-
-        $order_id = $order->get_id();
-        $payment_details = self::get_payment_details($order_id);
-        if(!is_array($payment_details))
-            return $price_html;
-
-        // Experimental regex, may fail with other custom price formatters
-        $match_ok = preg_match('/data-price="([^"]*)"/', $price_html, $matches);
-        if($match_ok !== 1) // regex failed
-            return $price_html;
-
-        $price = array_pop($matches);
-        $currency = $payment_details['currency'];
-        $rate = $payment_details['rate'];
-        $monero_amount = intval(MONERO_GATEWAY_ATOMIC_UNITS_POW * 1e8 * $price / $rate) / MONERO_GATEWAY_ATOMIC_UNITS_POW;
-        $monero_amount_formatted = sprintf('%.'.MONERO_GATEWAY_ATOMIC_UNITS.'f', $monero_amount);
-
-        return <<<HTML
-            <span class="woocommerce-Price-amount amount" data-price="$price" data-currency="$currency"
-        data-rate="$rate" data-rate-type="fixed">
-            $monero_amount_formatted
-            <span class="woocommerce-Price-currencySymbol">XMR</span>
-        </span>
-
-HTML;
-    }
-
-    public static function get_live_rate($currency)
-    {
-        if(isset(self::$rates[$currency]))
-            return self::$rates[$currency];
-
-        global $wpdb;
-        $table_name = $wpdb->prefix.'monero_gateway_live_rates';
-        $query = $wpdb->prepare("SELECT rate FROM $table_name WHERE currency=%s", array($currency));
-
-        $rate = $wpdb->get_row($query)->rate;
-        self::$rates[$currency] = $rate;
-
-        return $rate;
     }
 
     protected static function sanatize_id($payment_id)

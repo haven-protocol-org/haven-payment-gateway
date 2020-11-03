@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Monero Woocommerce Gateway
-Plugin URI: https://github.com/monero-integrations/monerowp
-Description: Extends WooCommerce by adding a Monero Gateway
-Version: 3.0.1
+Plugin Name: Haven Woocommerce Gateway
+Plugin URI: https://github.com/haven-protocol-org/xUSD-wp
+Description: Extends WooCommerce by adding a Haven Gateway
+Version: 0.0.1
 Tested up to: 4.9.8
 Author: mosu-forge, SerHack
 Author URI: https://monerointegrations.com/
@@ -189,9 +189,9 @@ function monero_init() {
 
     // [monero-accepted-here]
     function monero_accepted_func() {
-        return '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/monero-accepted-here.png" />';
+        return '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-accepted-here2x.png" />';
     }
-    add_shortcode('monero-accepted-here', 'monero_accepted_func');
+    add_shortcode('haven-accepted-here', 'monero_accepted_func');
 
 }
 

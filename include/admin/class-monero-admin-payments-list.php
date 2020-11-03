@@ -212,8 +212,8 @@ HTML;
 
     protected function get_item_count($type) {
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
         $query_where = ' WHERE 1=1 '.$this->get_clause_type($type);
         $query = "SELECT COUNT(*) AS count FROM {$table_name_2} t2 LEFT JOIN $table_name_1 t1 ON t2.payment_id = t1.payment_id {$query_where}";
         $item_count = $wpdb->get_var($query);
@@ -249,8 +249,8 @@ HTML;
         $this->items = array();
         $filters = $this->get_filter_vars();
 
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
+        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
+        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
 
         $query_where = ' WHERE 1=1 ';
 

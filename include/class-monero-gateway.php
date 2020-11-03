@@ -207,6 +207,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     {
         global $wpdb;
         $table_name = $wpdb->prefix.'monero_gateway_quotes';
+        $table_name = $wpdb->prefix.'haven_gateway_quotes';
 
         $order = wc_get_order($order_id);
 
@@ -293,7 +294,6 @@ class Monero_Gateway extends WC_Payment_Gateway
         set_transient('monero_gateway_network_height', $height);
 
         // Get pending payments
-        $table_name_1 = $wpdb->prefix.'monero_gateway_quotes';
         $table_name_2 = $wpdb->prefix.'monero_gateway_quotes_txids';
 
         $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());

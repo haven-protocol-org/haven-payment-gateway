@@ -88,7 +88,7 @@ class Monero_Gateway extends WC_Payment_Gateway
         // Initialize helper classes
         self::$cryptonote = new Monero_Cryptonote();
         if(self::$confirm_type == 'haven-wallet-rpc') {
-            require_once('class-haven-wallet-rpc.php');
+            require_once('class-monero-wallet-rpc.php');
             self::$monero_wallet_rpc = new Monero_Wallet_Rpc(self::$host, self::$port);
         } else {
             require_once('class-monero-explorer-tools.php');

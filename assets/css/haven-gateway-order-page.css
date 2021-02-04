@@ -1,26 +1,26 @@
-#monero_payment_messages > span {
+#haven_payment_messages > span {
     display:none;
 }
-.monero_details_row {
+.haven_details_row {
     display: flex !important;
     align-items: center;
     margin:0 -8px;
 }
-.monero_details_row > * {
+.haven_details_row > * {
     padding:0 8px;
 }
-.monero_details_left {
+.haven_details_left {
 }
-.monero_details_main {
+.haven_details_main {
     flex-grow: 1;
     word-break:break-all;
 }
-.monero_details_right.button-row {
+.haven_details_right.button-row {
     display:flex;
     margin-top: 5px;
     align-self: self-start;
 }
-.monero_details_right.button-row button {
+.haven_details_right.button-row button {
     width: 32px;
     height: 32px;
     padding: 6px 2px;
@@ -28,10 +28,10 @@
     line-height:28px;
     text-align:center;
 }
-#monero_integrated_address {
+#haven_integrated_address {
     line-height: 16px;
 }
-#monero_qr_code_container {
+#haven_qr_code_container {
     position:fixed;
     top:0;
     left:0;
@@ -40,7 +40,7 @@
     z-index:9999;
     background:rgba(0,0,0,0.5);
 }
-#monero_qr_code {
+#haven_qr_code {
     position: absolute;
     width: 256px;
     height: 256px;
@@ -52,13 +52,13 @@
     background: white;
     border-radius: 5px;
 }
-#monero_toast {
+#haven_toast {
     position: fixed;
     z-index: 999;
     top: 32px;
     right: 12px;
 }
-#monero_toast > div {
+#haven_toast > div {
     display: block;
     position: relative;
     overflow: hidden;
@@ -70,9 +70,9 @@
     color: white;
     right: -400px;
 }
-#monero_toast > div.success {
+#haven_toast > div.success {
     background: rgba(68, 190, 117, 0.8);
 }
-#monero_toast > div.error {
+#haven_toast > div.error {
     background: rgba(195, 60, 60, 0.8);
 }

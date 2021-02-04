@@ -17,7 +17,7 @@
     </tr>
     <tr>
         <td>Order age</td>
-        <td><?php echo Monero_Gateway::format_seconds_to_time($details['order_age']) ?> ago</td>
+        <td><?php echo Haven_Gateway::format_seconds_to_time($details['order_age']) ?> ago</td>
     </tr>
     <tr>
         <td>Order exipires</td>
@@ -75,7 +75,7 @@
             <a href="<?php echo MONERO_GATEWAY_EXPLORER_URL.'/tx/'.$tx['txid']; ?>" target="_blank"><?php echo $tx['txid']; ?></a>
         </td>
         <td><?php echo $tx['height']; ?></td>
-        <td><?php echo sprintf(MONERO_GATEWAY_ATOMIC_UNITS_SPRINTF, $tx['amount'] / MONERO_GATEWAY_ATOMIC_UNITS_POW); ?> XHV</td>
+        <td><?php echo sprintf(HAVEN_GATEWAY_ATOMIC_UNITS_SPRINTF, $tx['amount'] / HAVEN_GATEWAY_ATOMIC_UNITS_POW); ?> XHV</td>
     </tr>
     <?php endforeach; ?>
 </table>

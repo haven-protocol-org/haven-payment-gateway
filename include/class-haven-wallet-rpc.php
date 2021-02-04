@@ -1,19 +1,19 @@
 <?php
 /**
- * monero_wallet_rpc
+ * haven_wallet_rpc
  *
  * Written using the JSON RPC specification -
  * http://json-rpc.org/wiki/specification
  *
  * @author Kacper Rowinski <krowinski@implix.com>
  * http://implix.com
- * Modified to work with monero-rpc wallet by Serhack and cryptochangements
+ * Modified to work with haven-rpc wallet by Serhack and cryptochangements
  * Modified to work with haven-wallet-rpc wallet by mosu-forge
  */
 
 defined( 'ABSPATH' ) || exit;
 
-class Monero_Wallet_Rpc
+class Haven_Wallet_Rpc
 {
     protected $url = null, $is_debug = false;
     protected $curl_options = array(
@@ -214,7 +214,7 @@ class Monero_Wallet_Rpc
     }
 
     /*
-     * The following functions can all be called to interact with the Monero RPC wallet
+     * The following functions can all be called to interact with the Haven RPC wallet
      * They will majority of them will return the result as an array
      * Example: $daemon->address(); where $daemon is an instance of this class, will return the wallet address as string within an array
      */
@@ -275,7 +275,7 @@ class Monero_Wallet_Rpc
     public function make_uri($address, $amount, $recipient_name = null, $description = null)
     {
         // Convert to atomic units
-        $new_amount = $amount * MONERO_GATEWAY_ATOMIC_UNITS_POW;
+        $new_amount = $amount * HAVEN_GATEWAY_ATOMIC_UNITS_POW;
 
         $uri_params = array('address' => $address, 'amount' => $new_amount, 'payment_id' => '', 'recipient_name' => $recipient_name, 'tx_description' => $description);
         $uri = $this->_run('make_uri', $uri_params);
@@ -291,7 +291,7 @@ class Monero_Wallet_Rpc
 
     public function transfer($amount, $address, $mixin = 12)
     {
-        $new_amount = $amount * MONERO_GATEWAY_ATOMIC_UNITS_POW;
+        $new_amount = $amount * HAVEN_GATEWAY_ATOMIC_UNITS_POW;
         $destinations = array('amount' => $new_amount, 'address' => $address);
         $transfer_parameters = array('destinations' => array($destinations), 'mixin' => $mixin, 'get_tx_key' => true, 'unlock_time' => 0, 'payment_id' => '');
         $transfer_method = $this->_run('transfer', $transfer_parameters);

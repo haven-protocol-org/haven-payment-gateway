@@ -1,19 +1,19 @@
 <?php
 /*
- * Copyright (c) 2018, Ryo Currency Project
- * Admin interface for Monero gateway
+ * Copyright (c) 2018, Ryo Currency Project, Monero Integrations
+ * Admin interface for Haven gateway
  * Authors: mosu-forge
  */
 
 defined( 'ABSPATH' ) || exit;
 
-require_once('class-monero-admin-payments-list.php');
+require_once('class-haven-admin-payments-list.php');
 
-if (class_exists('Monero_Admin_Interface', false)) {
-    return new Monero_Admin_Interface();
+if (class_exists('Haven_Admin_Interface', false)) {
+    return new Haven_Admin_Interface();
 }
 
-class Monero_Admin_Interface {
+class Haven_Admin_Interface {
 
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'meta_boxes'));
@@ -26,8 +26,8 @@ class Monero_Admin_Interface {
      */
     public function meta_boxes() {
         add_meta_box(
-            'monero_admin_order_details',
-            __('Haven Protocol Gateway','monero_gateway'),
+            'haven_admin_order_details',
+            __('Haven Protocol Gateway','haven_gateway'),
             array($this, 'meta_box_order_details'),
             'shop_order',
             'normal',
@@ -39,7 +39,7 @@ class Monero_Admin_Interface {
      * Meta box for order page
      */
     public function meta_box_order_details($order) {
-        Monero_Gateway::admin_order_page($order);
+        Haven_Gateway::admin_order_page($order);
     }
 
     /**
@@ -47,30 +47,30 @@ class Monero_Admin_Interface {
      */
     public function admin_menu() {
         add_menu_page(
-            __('Haven Protocol', 'monero_gateway'),
-            __('Haven Protocol', 'monero_gateway'),
+            __('Haven Protocol', 'haven_gateway'),
+            __('Haven Protocol', 'haven_gateway'),
             'manage_woocommerce',
-            'monero_gateway',
+            'haven_gateway',
             array($this, 'orders_page'),
-            MONERO_GATEWAY_PLUGIN_URL.'/assets/images/haven-icon-admin.png',
+            HAVEN_GATEWAY_PLUGIN_URL.'/assets/images/haven-icon-admin.png',
             56 // Position on menu, woocommerce has 55.5, products has 55.6
         );
 
         add_submenu_page(
-            'monero_gateway',
-            __('Payments', 'monero_gateway'),
-            __('Payments', 'monero_gateway'),
+            'haven_gateway',
+            __('Payments', 'haven_gateway'),
+            __('Payments', 'haven_gateway'),
             'manage_woocommerce',
-            'monero_gateway_payments',
+            'haven_gateway_payments',
             array($this, 'payments_page')
         );
 
         $settings_page = add_submenu_page(
-            'monero_gateway',
-            __('Settings', 'monero_gateway'),
-            __('Settings', 'monero_gateway'),
+            'haven_gateway',
+            __('Settings', 'haven_gateway'),
+            __('Settings', 'haven_gateway'),
             'manage_options',
-            'monero_gateway_settings',
+            'haven_gateway_settings',
             array($this, 'settings_page')
         );
         add_action('load-'.$settings_page, array($this, 'settings_page_init'));
@@ -81,16 +81,16 @@ class Monero_Admin_Interface {
      */
     public function admin_menu_update() {
         global $submenu;
-        if (isset($submenu['monero_gateway'])) {
-            unset($submenu['monero_gateway'][0]);
+        if (isset($submenu['haven_gateway'])) {
+            unset($submenu['haven_gateway'][0]);
         }
     }
 
     /**
-     * Monero payments page
+     * Haven payments page
      */
     public function payments_page() {
-        $payments_list = new Monero_Admin_Payments_List();
+        $payments_list = new Haven_Admin_Payments_List();
         $payments_list->prepare_items();
         $payments_list->display();
     }
@@ -105,7 +105,7 @@ class Monero_Admin_Interface {
     public function settings_page_init() {
         global $current_tab, $current_section;
 
-        $current_section = 'monero_gateway';
+        $current_section = 'haven_gateway';
         $current_tab = 'checkout';
 
         // Include settings pages.
@@ -130,4 +130,4 @@ class Monero_Admin_Interface {
 
 }
 
-return new Monero_Admin_Interface();
+return new Haven_Admin_Interface();

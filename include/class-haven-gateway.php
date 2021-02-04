@@ -1,16 +1,16 @@
 <?php
 /*
- * Main Gateway of Monero using either a local daemon or the explorer
- * Authors: SerHack, cryptochangements, mosu-forge
+ * Main Gateway of Haven using either a local daemon or the explorer
+ * Authors: zrero, SerHack, cryptochangements, mosu-forge
  */
 
 defined( 'ABSPATH' ) || exit;
 
-require_once('class-monero-cryptonote.php');
+require_once('class-haven-cryptonote.php');
 
-class Monero_Gateway extends WC_Payment_Gateway
+class Haven_Gateway extends WC_Payment_Gateway
 {
-    private static $_id = 'monero_gateway';
+    private static $_id = 'haven_gateway';
     private static $_title = 'Haven Protocol Gateway';
     private static $_method_title = 'Haven Protocol Gateway';
     private static $_method_description = 'Haven Protocol Gateway Plug-in for WooCommerce.';
@@ -29,8 +29,8 @@ class Monero_Gateway extends WC_Payment_Gateway
     private static $show_qr = false;
 
     private static $cryptonote;
-    private static $monero_wallet_rpc;
-    private static $monero_explorer_tools;
+    private static $haven_wallet_rpc;
+    private static $haven_explorer_tools;
     private static $log;
 
     private static $rates = array();
@@ -39,14 +39,14 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public function get_icon()
     {
-        return apply_filters('woocommerce_gateway_icon', '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-icon.png"/>', $this->id);
+        return apply_filters('woocommerce_gateway_icon', '<img src="'.HAVEN_GATEWAY_PLUGIN_URL.'assets/images/haven-icon.png"/>', $this->id);
     }
 
     function __construct($add_action=true)
     {
         $this->id = self::$_id;
-        $this->method_title = __(self::$_method_title, 'monero_gateway');
-        $this->method_description = __(self::$_method_description, 'monero_gateway');
+        $this->method_title = __(self::$_method_title, 'haven_gateway');
+        $this->method_description = __(self::$_method_description, 'haven_gateway');
         $this->has_fields = false;
         $this->supports = array(
             'products',
@@ -71,7 +71,7 @@ class Monero_Gateway extends WC_Payment_Gateway
         self::$valid_time = $this->settings['valid_time'];
         self::$confirms = $this->settings['confirms'];
         self::$confirm_type = $this->settings['confirm_type'];
-        self::$address = $this->settings['monero_address'];
+        self::$address = $this->settings['haven_address'];
         self::$viewkey = $this->settings['viewkey'];
         self::$host = $this->settings['daemon_host'];
         self::$port = $this->settings['daemon_port'];
@@ -79,20 +79,20 @@ class Monero_Gateway extends WC_Payment_Gateway
         self::$onion_service = $this->settings['onion_service'] == 'yes';
         self::$show_qr = $this->settings['show_qr'] == 'yes';
 
-        $explorer_url = self::$testnet ? MONERO_GATEWAY_TESTNET_EXPLORER_URL : MONERO_GATEWAY_MAINNET_EXPLORER_URL;
+        $explorer_url = self::$testnet ? HAVEN_GATEWAY_TESTNET_EXPLORER_URL : HAVEN_GATEWAY_MAINNET_EXPLORER_URL;
         defined('MONERO_GATEWAY_EXPLORER_URL') || define('MONERO_GATEWAY_EXPLORER_URL', $explorer_url);
 
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
 
         // Initialize helper classes
-        self::$cryptonote = new Monero_Cryptonote();
+        self::$cryptonote = new Haven_Cryptonote();
         if(self::$confirm_type == 'haven-wallet-rpc') {
-            require_once('class-monero-wallet-rpc.php');
-            self::$monero_wallet_rpc = new Monero_Wallet_Rpc(self::$host, self::$port);
+            require_once('class-haven-wallet-rpc.php');
+            self::$haven_wallet_rpc = new Haven_Wallet_Rpc(self::$host, self::$port);
         } else {
-            require_once('class-monero-explorer-tools.php');
-            self::$monero_explorer_tools = new Monero_Explorer_Tools(self::$testnet);
+            require_once('class-haven-explorer-tools.php');
+            self::$haven_explorer_tools = new Haven_Explorer_Tools(self::$testnet);
         }
 
         self::$log = new WC_Logger();
@@ -100,10 +100,10 @@ class Monero_Gateway extends WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $this->form_fields = include 'admin/monero-gateway-admin-settings.php';
+        $this->form_fields = include 'admin/haven-gateway-admin-settings.php';
     }
 
-    public function validate_monero_address_field($key,$address)
+    public function validate_haven_address_field($key,$address)
     {
         if($this->settings['confirm_type'] == 'viewkey') {
             if (strlen($address) == 98 && substr($address, 0, 2) == 'hv')
@@ -149,7 +149,7 @@ class Monero_Gateway extends WC_Payment_Gateway
 
         $settings_html = $this->generate_settings_html(array(), false);
         $errors = array_merge(self::$_errors, $this->admin_php_module_check(), $this->admin_ssl_check());
-        include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/admin/settings-page.php';
+        include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/admin/settings-page.php';
     }
 
     public static function admin_balance_info()
@@ -161,11 +161,11 @@ class Monero_Gateway extends WC_Payment_Gateway
                 'unlocked_balance' => 'Not Available',
             );
         }
-        $wallet_amount = self::$monero_wallet_rpc->getbalance();
-        $height = self::$monero_wallet_rpc->getheight();
+        $wallet_amount = self::$haven_wallet_rpc->getbalance();
+        $height = self::$haven_wallet_rpc->getheight();
         if (!isset($wallet_amount)) {
             self::$_errors[] = 'Cannot connect to haven-wallet-rpc';
-            self::$log->add('Monero_Payments', '[ERROR] Cannot connect to haven-wallet-rpc');
+            self::$log->add('Haven_Payments', '[ERROR] Cannot connect to haven-wallet-rpc');
             return array(
                 'height' => 'Not Available',
                 'balance' => 'Not Available',
@@ -174,8 +174,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         } else {
             return array(
                 'height' => $height,
-                'balance' => self::format_monero($wallet_amount['balance']).' Haven',
-                'unlocked_balance' => self::format_monero($wallet_amount['unlocked_balance']).' Haven'
+                'balance' => self::format_haven($wallet_amount['balance']).' Haven',
+                'unlocked_balance' => self::format_haven($wallet_amount['unlocked_balance']).' Haven'
             );
         }
     }
@@ -214,26 +214,26 @@ class Monero_Gateway extends WC_Payment_Gateway
         }
         else {
           // Generate subaddress
-          $payment_id = self::$monero_wallet_rpc->create_address(0, 'Order: ' . $order_id);
+          $payment_id = self::$haven_wallet_rpc->create_address(0, 'Order: ' . $order_id);
           if(isset($payment_id['address'])) {
             $payment_id = $payment_id['address'];
           }
           else {
-            $this->log->add('Monero_Gateway', 'Couldn\'t create subaddress for order ' . $order_id);
+            $this->log->add('Haven_Gateway', 'Couldn\'t create subaddress for order ' . $order_id);
           }
         }
 
-        $monero_amount = $order->get_total(''); //TODO Is this the right amount????
+        $haven_amount = $order->get_total(''); //TODO Is this the right amount????
 
         if(self::$discount)
-            $monero_amount = $monero_amount - $monero_amount * self::$discount / 100;
+            $haven_amount = $haven_amount - $haven_amount * self::$discount / 100;
 
-        $monero_amount = intval($monero_amount * MONERO_GATEWAY_ATOMIC_UNITS_POW);
+        $haven_amount = intval($haven_amount * HAVEN_GATEWAY_ATOMIC_UNITS_POW);
 
-        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $monero_amount));
+        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $haven_amount));
         $wpdb->query($query);
 
-        $order->update_status('on-hold', __('Awaiting offline payment', 'monero_gateway'));
+        $order->update_status('on-hold', __('Awaiting offline payment', 'haven_gateway'));
         $order->reduce_order_stock(); // Reduce stock levels
         WC()->cart->empty_cart(); // Remove cart
 
@@ -253,10 +253,10 @@ class Monero_Gateway extends WC_Payment_Gateway
 
         // Get current network/wallet height
         if(self::$confirm_type == 'haven-wallet-rpc')
-            $height = self::$monero_wallet_rpc->getheight();
+            $height = self::$haven_wallet_rpc->getheight();
         else
-            $height = self::$monero_explorer_tools->getheight();
-        set_transient('monero_gateway_network_height', $height);
+            $height = self::$haven_explorer_tools->getheight();
+        set_transient('haven_gateway_network_height', $height);
 
         // Get pending payments
         $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
@@ -287,7 +287,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             $order_id = $quote->order_id;
             $order = wc_get_order($order_id);
             $payment_id = self::sanatize_id($quote->payment_id);
-            $amount_monero = $quote->amount_total;
+            $amount_haven = $quote->amount_total;
 
             if(self::$confirm_type == 'haven-wallet-rpc')
                 $new_txs = self::check_payment_rpc($payment_id);
@@ -320,7 +320,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                 $heights[] = $tx->height;
             }
 
-            $paid = $amount_paid > $amount_monero - MONERO_GATEWAY_ATOMIC_UNIT_THRESHOLD;
+            $paid = $amount_paid > $amount_haven - HAVEN_GATEWAY_ATOMIC_UNIT_THRESHOLD;
 
             if($paid) {
                 if(self::$confirms == 0) {
@@ -338,20 +338,20 @@ class Monero_Gateway extends WC_Payment_Gateway
             }
 
             if($paid && $confirmed) {
-                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id (currency: $quote->currency)");
+                self::$log->add('Haven_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id (currency: $quote->currency)");
                 $query = $wpdb->prepare("UPDATE $table_name_1 SET confirmed=1,paid=1,pending=0 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 
                 unset(self::$payment_details[$order_id]);
 
                 if(self::is_virtual_in_cart($order_id) == true){
-                    $order->update_status('completed', __('Payment has been received.', 'monero_gateway'));
+                    $order->update_status('completed', __('Payment has been received.', 'haven_gateway'));
                 } else {
-                    $order->update_status('processing', __('Payment has been received.', 'monero_gateway'));
+                    $order->update_status('processing', __('Payment has been received.', 'haven_gateway'));
                 }
 
             } else if($paid) {
-                self::$log->add('Monero_Payments', "[SUCCESS] Payment has been received for order id $order_id and payment id $payment_id");
+                self::$log->add('Haven_Payments', "[SUCCESS] Payment has been received for order id $order_id and payment id $payment_id");
                 $query = $wpdb->prepare("UPDATE $table_name_1 SET paid=1 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 
@@ -362,13 +362,13 @@ class Monero_Gateway extends WC_Payment_Gateway
                 $timestamp_now = new DateTime($quote->now);
                 $order_age_seconds = $timestamp_now->getTimestamp() - $timestamp_created->getTimestamp();
                 if($order_age_seconds > self::$valid_time) {
-                    self::$log->add('Monero_Payments', "[FAILED] Payment has expired for order id $order_id and payment id $payment_id");
+                    self::$log->add('Haven_Payments', "[FAILED] Payment has expired for order id $order_id and payment id $payment_id");
                     $query = $wpdb->prepare("UPDATE $table_name_1 SET pending=0 WHERE payment_id=%s", array($payment_id));
                     $wpdb->query($query);
 
                     unset(self::$payment_details[$order_id]);
 
-                    $order->update_status('cancelled', __('Payment has expired.', 'monero_gateway'));
+                    $order->update_status('cancelled', __('Payment has expired.', 'haven_gateway'));
                 }
             }
         }
@@ -377,15 +377,15 @@ class Monero_Gateway extends WC_Payment_Gateway
     protected static function check_payment_rpc($subaddress)
     {
         $txs = array();
-        $address_index = self::$monero_wallet_rpc->get_address_index($subaddress);
+        $address_index = self::$haven_wallet_rpc->get_address_index($subaddress);
         if(isset($address_index['index']['minor'])){
           $address_index = $address_index['index']['minor'];
         }
         else {
-          self::$log->add('Monero_Gateway', '[ERROR] Couldn\'t get address index of subaddress: ' . $subaddress);
+          self::$log->add('Haven_Gateway', '[ERROR] Couldn\'t get address index of subaddress: ' . $subaddress);
           return $txs;
         }
-        $payments = self::$monero_wallet_rpc->get_transfers(array( 'in' => true, 'pool' => true, 'subaddr_indices' => array($address_index)));
+        $payments = self::$haven_wallet_rpc->get_transfers(array( 'in' => true, 'pool' => true, 'subaddr_indices' => array($address_index)));
         if(isset($payments['in'])) {
           foreach($payments['in'] as $payment) {
               $txs[] = array(
@@ -412,7 +412,7 @@ class Monero_Gateway extends WC_Payment_Gateway
     public static function check_payment_explorer($payment_id)
     {
         $txs = array();
-        $outputs = self::$monero_explorer_tools->get_outputs(self::$address, self::$viewkey);
+        $outputs = self::$haven_explorer_tools->get_outputs(self::$address, self::$viewkey);
         foreach($outputs as $payment) {
             if($payment['payment_id'] == $payment_id) {
                 $txs[] = array(
@@ -451,7 +451,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     'height' => $tx->height,
                     'currency' => $tx->currency,
                     'amount' => $tx->amount_paid,
-                    'amount_formatted' => self::format_monero($tx->amount_paid)
+                    'amount_formatted' => self::format_haven($tx->amount_paid)
                 );
                 $amount_paid += $tx->amount_paid;
                 $heights[] = $tx->height;
@@ -463,14 +463,14 @@ class Monero_Gateway extends WC_Payment_Gateway
             });
 
             if(count($heights) && !in_array(0, $heights)) {
-                $height = get_transient('monero_gateway_network_height');
+                $height = get_transient('haven_gateway_network_height');
                 $highest_block = max($heights);
                 $confirms = $height - $highest_block;
                 $blocks_to_confirm = self::$confirms - $confirms;
             } else {
                 $blocks_to_confirm = self::$confirms;
             }
-            $time_to_confirm = self::format_seconds_to_time($blocks_to_confirm * MONERO_GATEWAY_DIFFICULTY_TARGET);
+            $time_to_confirm = self::format_seconds_to_time($blocks_to_confirm * HAVEN_GATEWAY_DIFFICULTY_TARGET);
 
             $amount_total = $details[0]->amount_total;
             $amount_due = max(0, $amount_total - $amount_paid);
@@ -493,7 +493,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                     $pub_viewkey = $decoded_address['viewkey'];
                     $integrated_addr = self::$cryptonote->integrated_addr_from_keys($pub_spendkey, $pub_viewkey, $payment_id);
                 } else {
-                    self::$log->add('Monero_Gateway', '[ERROR] Merchant has not set Haven Protocol address');
+                    self::$log->add('Haven_Gateway', '[ERROR] Merchant has not set Haven Protocol address');
                     return '[ERROR] Merchant has not set Haven Protocol address';
                 }
             }
@@ -521,7 +521,7 @@ class Monero_Gateway extends WC_Payment_Gateway
                 }
             }
 
-            $amount_formatted = self::format_monero($amount_due);
+            $amount_formatted = self::format_haven($amount_due);
             $qrcode_uri = 'haven:'.$address.'?tx_amount='.$amount_formatted.'&tx_payment_id='.$payment_id;
             $my_order_url = wc_get_endpoint_url('view-order', $order_id, wc_get_page_permalink('myaccount'));
 
@@ -537,9 +537,9 @@ class Monero_Gateway extends WC_Payment_Gateway
                 'amount_total' => $amount_total,
                 'amount_paid' => $amount_paid,
                 'amount_due' => $amount_due,
-                'amount_total_formatted' => self::format_monero($amount_total),
-                'amount_paid_formatted' => self::format_monero($amount_paid),
-                'amount_due_formatted' => self::format_monero($amount_due),
+                'amount_total_formatted' => self::format_haven($amount_total),
+                'amount_paid_formatted' => self::format_haven($amount_paid),
+                'amount_due_formatted' => self::format_haven($amount_due),
                 'status' => $status,
                 'created' => $details[0]->created,
                 'order_age' => $order_age_seconds,
@@ -569,7 +569,7 @@ class Monero_Gateway extends WC_Payment_Gateway
             self::ajax_output(array('error' => '[ERROR] Order does not belong to this user'));
 
         if($order->get_payment_method() != self::$_id)
-            self::ajax_output(array('error' => '[ERROR] Order not paid for with Monero'));
+            self::ajax_output(array('error' => '[ERROR] Order not paid for with Haven'));
 
         $details = self::get_payment_details($order);
         if(!is_array($details))
@@ -595,10 +595,10 @@ class Monero_Gateway extends WC_Payment_Gateway
         $details = self::get_payment_details($order);
         if(!is_array($details)) {
             $error = $details;
-            include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/admin/order-history-error-page.php';
+            include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/admin/order-history-error-page.php';
             return;
         }
-        include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/admin/order-history-page.php';
+        include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/admin/order-history-page.php';
     }
 
     public static function customer_order_page($order)
@@ -617,13 +617,13 @@ class Monero_Gateway extends WC_Payment_Gateway
         $details = self::get_payment_details($order_id);
         if(!is_array($details)) {
             $error = $details;
-            include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/customer/order-error-page.php';
+            include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/customer/order-error-page.php';
             return;
         }
         $show_qr = self::$show_qr;
         $details_json = json_encode($details);
-        $ajax_url = WC_AJAX::get_endpoint('monero_gateway_payment_details');
-        include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/customer/order-page.php';
+        $ajax_url = WC_AJAX::get_endpoint('haven_gateway_payment_details');
+        include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/customer/order-page.php';
     }
 
     public static function customer_order_email($order)
@@ -641,10 +641,10 @@ class Monero_Gateway extends WC_Payment_Gateway
         $method_title = self::$_title;
         $details = self::get_payment_details($order_id);
         if(!is_array($details)) {
-            include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/customer/order-email-error-block.php';
+            include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/customer/order-email-error-block.php';
             return;
         }
-        include MONERO_GATEWAY_PLUGIN_DIR . '/templates/monero-gateway/customer/order-email-block.php';
+        include HAVEN_GATEWAY_PLUGIN_DIR . '/templates/haven-gateway/customer/order-email-block.php';
     }
 
     public static function get_id()
@@ -685,8 +685,8 @@ class Monero_Gateway extends WC_Payment_Gateway
         return $virtual_items == $cart_size;
     }
 
-    public static function format_monero($atomic_units) {
-        return sprintf(MONERO_GATEWAY_ATOMIC_UNITS_SPRINTF, $atomic_units / MONERO_GATEWAY_ATOMIC_UNITS_POW);
+    public static function format_haven($atomic_units) {
+        return sprintf(HAVEN_GATEWAY_ATOMIC_UNITS_SPRINTF, $atomic_units / HAVEN_GATEWAY_ATOMIC_UNITS_POW);
     }
 
     public static function format_seconds_to_time($seconds)

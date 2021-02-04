@@ -1,6 +1,6 @@
 <?php
 /**
- * monero_explorer_tools.php
+ * haven_explorer_tools.php
  *
  * Uses CURL to call API functions from the block explorer
  * https://xmrchain.net/
@@ -13,12 +13,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-class Monero_Explorer_Tools
+class Haven_Explorer_Tools
 {
     private $url;
     public function __construct($testnet = false)
     {
-        $this->url = $testnet ? MONERO_GATEWAY_TESTNET_EXPLORER_URL : MONERO_GATEWAY_MAINNET_EXPLORER_URL;
+        $this->url = $testnet ? HAVEN_GATEWAY_TESTNET_EXPLORER_URL : HAVEN_GATEWAY_MAINNET_EXPLORER_URL;
         $this->url = preg_replace("/\/+$/", "", $this->url);
     }
 

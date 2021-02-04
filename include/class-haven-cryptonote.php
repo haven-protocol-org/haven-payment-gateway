@@ -13,15 +13,15 @@ if(!class_exists('ed25519'))
 
 require_once('class-monero-base58.php');
 
-class Monero_Cryptonote
+class Haven_Cryptonote
 {
     protected $ed25519;
     public function __construct()
     {
         $this->ed25519 = new ed25519();
         $this->base58 = new Monero_base58();
-        $this->address_prefix = MONERO_GATEWAY_ADDRESS_PREFIX;
-        $this->address_prefix_integrated = MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED;
+        $this->address_prefix = HAVEN_GATEWAY_ADDRESS_PREFIX;
+        $this->address_prefix_integrated = HAVEN_GATEWAY_ADDRESS_PREFIX_INTEGRATED;
     }
 
     /*

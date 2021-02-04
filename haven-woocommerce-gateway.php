@@ -5,21 +5,21 @@ Plugin URI: https://github.com/haven-protocol-org/xUSD-wp
 Description: Extends WooCommerce by adding a Haven Gateway
 Version: 0.0.1
 Tested up to: 4.9.8
-Author: mosu-forge, SerHack
-Author URI: https://monerointegrations.com/
+Author:zrero, mosu-forge, SerHack
+Author URI: https://havenprotocol.org/
 */
 // This code isn't for Dark Net Markets, please report them to Authority!
 
 defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
-define('MONERO_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
-define('MONERO_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer.testnet.havenprotocol.org/');
-define('MONERO_GATEWAY_ADDRESS_PREFIX', 0x5af4);
-define('MONERO_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
-define('MONERO_GATEWAY_ATOMIC_UNITS', 12);
-define('MONERO_GATEWAY_ATOMIC_UNIT_THRESHOLD', 10); // Amount under in atomic units payment is valid
-define('MONERO_GATEWAY_DIFFICULTY_TARGET', 120);
+define('HAVEN_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
+define('HAVEN_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer.testnet.havenprotocol.org/');
+define('HAVEN_GATEWAY_ADDRESS_PREFIX', 0x5af4);
+define('HAVEN_GATEWAY_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
+define('HAVEN_GATEWAY_ATOMIC_UNITS', 12);
+define('HAVEN_GATEWAY_ATOMIC_UNIT_THRESHOLD', 10); // Amount under in atomic units payment is valid
+define('HAVEN_GATEWAY_DIFFICULTY_TARGET', 120);
 
 define('HAVEN_XASSETS',
 [
@@ -47,32 +47,32 @@ define('HAVEN_XASSETS',
 );
 
 // Do not edit these constants
-define('MONERO_GATEWAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('MONERO_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('MONERO_GATEWAY_ATOMIC_UNITS_POW', pow(10, MONERO_GATEWAY_ATOMIC_UNITS));
-define('MONERO_GATEWAY_ATOMIC_UNITS_SPRINTF', '%.'.MONERO_GATEWAY_ATOMIC_UNITS.'f');
+define('HAVEN_GATEWAY_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('HAVEN_GATEWAY_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('HAVEN_GATEWAY_ATOMIC_UNITS_POW', pow(10, HAVEN_GATEWAY_ATOMIC_UNITS));
+define('HAVEN_GATEWAY_ATOMIC_UNITS_SPRINTF', '%.'.HAVEN_GATEWAY_ATOMIC_UNITS.'f');
 
 $xAssetSelected = "";
 
 // Include our Gateway Class and register Payment Gateway with WooCommerce
-add_action('plugins_loaded', 'monero_init', 1);
-function monero_init() {
+add_action('plugins_loaded', 'haven_init', 1);
+function haven_init() {
 
     // If the class doesn't exist (== WooCommerce isn't installed), return NULL
     if (!class_exists('WC_Payment_Gateway')) return;
 
     // If we made it this far, then include our Gateway Class
-    require_once('include/class-monero-gateway.php');
+    require_once('include/class-haven-gateway.php');
 
     // Create a new instance of the gateway so we have static variables set up
-    new Monero_Gateway($add_action=false);
+    new Haven_Gateway($add_action=false);
 
     // Include our Admin interface class
-    require_once('include/admin/class-monero-admin-interface.php');
+    require_once('include/admin/class-haven-admin-interface.php');
 
-    add_filter('woocommerce_payment_gateways', 'monero_gateway');
-    function monero_gateway($methods) {
-        $methods[] = 'Monero_Gateway';
+    add_filter('woocommerce_payment_gateways', 'haven_gateway');
+    function haven_gateway($methods) {
+        $methods[] = 'Haven_Gateway';
         return $methods;
     }
 
@@ -96,7 +96,7 @@ function monero_init() {
       }
 
       if($unset){
-        unset( $available_gateways['monero_gateway'] );
+        unset( $available_gateways['haven_gateway'] );
       }
       return $available_gateways;
   }
@@ -104,105 +104,105 @@ function monero_init() {
   add_filter( 'woocommerce_gateway_title', 'change_cheque_payment_gateway_title', 100, 2 );
   function change_cheque_payment_gateway_title( $title, $payment_id ){
       global $xAssetSelected;
-      if( $payment_id === 'monero_gateway' ) {
+      if( $payment_id === 'haven_gateway' ) {
           $title = __($title." ($".$xAssetSelected.")", "woocommerce");
       }
       return $title;
   }
 
-    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'monero_payment');
-    function monero_payment($links) {
+    add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'haven_payment');
+    function haven_payment($links) {
         $plugin_links = array(
-            '<a href="'.admin_url('admin.php?page=monero_gateway_settings').'">'.__('Settings', 'monero_gateway').'</a>'
+            '<a href="'.admin_url('admin.php?page=haven_gateway_settings').'">'.__('Settings', 'haven_gateway').'</a>'
         );
         return array_merge($plugin_links, $links);
     }
 
-    add_filter('cron_schedules', 'monero_cron_add_one_minute');
-    function monero_cron_add_one_minute($schedules) {
+    add_filter('cron_schedules', 'haven_cron_add_one_minute');
+    function haven_cron_add_one_minute($schedules) {
         $schedules['one_minute'] = array(
             'interval' => 60,
-            'display' => __('Once every minute', 'monero_gateway')
+            'display' => __('Once every minute', 'haven_gateway')
         );
         return $schedules;
     }
 
-    add_action('wp', 'monero_activate_cron');
-    function monero_activate_cron() {
-        if(!wp_next_scheduled('monero_update_event')) {
-            wp_schedule_event(time(), 'one_minute', 'monero_update_event');
+    add_action('wp', 'haven_activate_cron');
+    function haven_activate_cron() {
+        if(!wp_next_scheduled('haven_update_event')) {
+            wp_schedule_event(time(), 'one_minute', 'haven_update_event');
         }
     }
 
-    add_action('monero_update_event', 'monero_update_event');
-    function monero_update_event() {
-        Monero_Gateway::do_update_event();
+    add_action('haven_update_event', 'haven_update_event');
+    function haven_update_event() {
+        Haven_Gateway::do_update_event();
     }
 
-    add_action('woocommerce_thankyou_'.Monero_Gateway::get_id(), 'monero_order_confirm_page');
-    add_action('woocommerce_order_details_after_order_table', 'monero_order_page');
-    add_action('woocommerce_email_after_order_table', 'monero_order_email');
+    add_action('woocommerce_thankyou_'.Haven_Gateway::get_id(), 'haven_order_confirm_page');
+    add_action('woocommerce_order_details_after_order_table', 'haven_order_page');
+    add_action('woocommerce_email_after_order_table', 'haven_order_email');
 
-    function monero_order_confirm_page($order_id) {
-        Monero_Gateway::customer_order_page($order_id);
+    function haven_order_confirm_page($order_id) {
+        Haven_Gateway::customer_order_page($order_id);
     }
-    function monero_order_page($order) {
+    function haven_order_page($order) {
         if(!is_wc_endpoint_url('order-received'))
-            Monero_Gateway::customer_order_page($order);
+            Haven_Gateway::customer_order_page($order);
     }
-    function monero_order_email($order) {
-        Monero_Gateway::customer_order_email($order);
+    function haven_order_email($order) {
+        Haven_Gateway::customer_order_email($order);
     }
 
-    add_action('wc_ajax_monero_gateway_payment_details', 'monero_get_payment_details_ajax');
-    function monero_get_payment_details_ajax() {
-        Monero_Gateway::get_payment_details_ajax();
+    add_action('wc_ajax_haven_gateway_payment_details', 'haven_get_payment_details_ajax');
+    function haven_get_payment_details_ajax() {
+        Haven_Gateway::get_payment_details_ajax();
     }
 
     //Add them to the choice list of currency in admin
-    add_filter('woocommerce_currencies', 'monero_add_currency');
-    function monero_add_currency($currencies) {
+    add_filter('woocommerce_currencies', 'haven_add_currency');
+    function haven_add_currency($currencies) {
         foreach(HAVEN_XASSETS as $xAsset => $options){
-          $currencies[$xAsset] = __($xAsset, 'monero_gateway');
+          $currencies[$xAsset] = __($xAsset, 'haven_gateway');
         }
 
         return $currencies;
     }
 
-    add_filter('woocommerce_currency_symbol', 'monero_add_currency_symbol', 10, 2);
-    function monero_add_currency_symbol($currency_symbol, $currency) {
+    add_filter('woocommerce_currency_symbol', 'haven_add_currency_symbol', 10, 2);
+    function haven_add_currency_symbol($currency_symbol, $currency) {
       if(!empty(HAVEN_XASSETS[$currency]['symbol'])){
         $currency_symbol = HAVEN_XASSETS[$currency]['symbol'];
       }
       return $currency_symbol;
     }
 
-    add_action('wp_enqueue_scripts', 'monero_enqueue_scripts');
-    function monero_enqueue_scripts() {
-        if(Monero_Gateway::use_qr_code())
-            wp_enqueue_script('monero-qr-code', MONERO_GATEWAY_PLUGIN_URL.'assets/js/qrcode.min.js');
+    add_action('wp_enqueue_scripts', 'haven_enqueue_scripts');
+    function haven_enqueue_scripts() {
+        if(Haven_Gateway::use_qr_code())
+            wp_enqueue_script('haven-qr-code', HAVEN_GATEWAY_PLUGIN_URL.'assets/js/qrcode.min.js');
 
-        wp_enqueue_script('monero-clipboard-js', MONERO_GATEWAY_PLUGIN_URL.'assets/js/clipboard.min.js');
-        wp_enqueue_script('monero-gateway', MONERO_GATEWAY_PLUGIN_URL.'assets/js/monero-gateway-order-page.js');
-        wp_enqueue_style('monero-gateway', MONERO_GATEWAY_PLUGIN_URL.'assets/css/monero-gateway-order-page.css');
+        wp_enqueue_script('haven-clipboard-js', HAVEN_GATEWAY_PLUGIN_URL.'assets/js/clipboard.min.js');
+        wp_enqueue_script('haven-gateway', HAVEN_GATEWAY_PLUGIN_URL.'assets/js/haven-gateway-order-page.js');
+        wp_enqueue_style('haven-gateway', HAVEN_GATEWAY_PLUGIN_URL.'assets/css/haven-gateway-order-page.css');
     }
 
-    // [monero-accepted-here]
-    function monero_accepted_func() {
-        return '<img src="'.MONERO_GATEWAY_PLUGIN_URL.'assets/images/haven-accepted-here2x.png" />';
+    // [haven-accepted-here]
+    function haven_accepted_func() {
+        return '<img src="'.HAVEN_GATEWAY_PLUGIN_URL.'assets/images/haven-accepted-here2x.png" />';
     }
-    add_shortcode('haven-accepted-here', 'monero_accepted_func');
+    add_shortcode('haven-accepted-here', 'haven_accepted_func');
 
 }
 
-register_deactivation_hook(__FILE__, 'monero_deactivate');
-function monero_deactivate() {
-    $timestamp = wp_next_scheduled('monero_update_event');
-    wp_unschedule_event($timestamp, 'monero_update_event');
+register_deactivation_hook(__FILE__, 'haven_deactivate');
+function haven_deactivate() {
+    $timestamp = wp_next_scheduled('haven_update_event');
+    wp_unschedule_event($timestamp, 'haven_update_event');
 }
 
-register_activation_hook(__FILE__, 'monero_install');
-function monero_install() {
+register_activation_hook(__FILE__, 'haven_install');
+function haven_install() {
     global $wpdb;
     require_once( ABSPATH . '/wp-admin/includes/upgrade.php' );
     $charset_collate = $wpdb->get_charset_collate();

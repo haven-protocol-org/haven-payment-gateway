@@ -48,9 +48,9 @@ The most secure way to accept xUSD, xEUR and other xAssets on your website. You'
 * Root access to your webserver
 * Latest [Haven-currency binaries](https://havenprotocol.org/products/)
 
-After downloading (or compiling) the Haven Protocol binaries on your server, install the [systemd unit files](https://github.com/monero-integrations/monerowp/tree/master/assets/systemd-unit-files) or run `monerod` and `haven-wallet-rpc` with `screen` or `tmux`. You can skip running `monerod` by using a remote node with `haven-wallet-rpc` by adding `--daemon-address node.moneroworld.com:18089` to the `haven-wallet-rpc.service` file.
+After downloading (or compiling) the Haven Protocol binaries on your server, install the [systemd unit files](https://github.com/haven-protocol-org/xUSD-wp/tree/master/assets/systemd-unit-files) or run `havend` and `haven-wallet-rpc` with `screen` or `tmux`. You can skip running `havend` by using a remote node with `haven-wallet-rpc` by adding `--daemon-address https://vault.havenprotocol.org` to the `haven-wallet-rpc.service` file.
 
-Note on security: using this option, while the most secure, requires you to run the Monero wallet RPC program on your server. Best practice for this is to use a view-only wallet since otherwise your server would be running a hot-wallet and a security breach could allow hackers to empty your funds.
+Note on security: using this option, while the most secure, requires you to run the Haven wallet RPC program on your server. Best practice for this is to use a view-only wallet since otherwise your server would be running a hot-wallet and a security breach could allow hackers to empty your funds.
 
 ## Configuration
 
@@ -74,16 +74,18 @@ Note on security: using this option, while the most secure, requires you to run 
 
 This plugin makes available two shortcodes that you can use in your theme.
 
-#### Monero accepted here badge
+#### Haven accepted here badge
 
 This will display a badge showing that you accept Haven-currency.
 
 `[haven-accepted-here]`
 
-![Haven Accepted Here](/assets/images/haven-accepted-here2x.png?raw=true "Monero Accepted Here")
+![Haven Accepted Here](/assets/images/haven-accepted-here2x.png?raw=true "Haven Accepted Here")
 
 ## Donations
 
-monero-integrations: 44krVcL6TPkANjpFwS2GWvg1kJhTrN7y9heVeQiDJ3rP8iGbCd5GeA4f3c2NKYHC1R4mCgnW7dsUUUae2m9GiNBGT4T8s2X
+any haven-currency: tba
+
+monero-currency: 44krVcL6TPkANjpFwS2GWvg1kJhTrN7y9heVeQiDJ3rP8iGbCd5GeA4f3c2NKYHC1R4mCgnW7dsUUUae2m9GiNBGT4T8s2X
 
 ryo-currency: 4A6BQp7do5MTxpCguq1kAS27yMLpbHcf89Ha2a8Shayt2vXkCr6QRpAXr1gLYRV5esfzoK3vLJTm5bDWk5gKmNrT6s6xZep

@@ -95,6 +95,6 @@
 <script type="text/javascript">
     var haven_show_qr = <?php echo $show_qr ? 'true' : 'false'; ?>;
     var haven_ajax_url = '<?php echo $ajax_url; ?>';
-    var haven_explorer_url = '<?php echo MONERO_GATEWAY_EXPLORER_URL; ?>';
+    var haven_explorer_url = '<?php echo HAVEN_GATEWAY_EXPLORER_URL; ?>';
     var haven_details = <?php echo $details_json; ?>;
 </script>

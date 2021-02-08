@@ -80,7 +80,9 @@ class Haven_Gateway extends WC_Payment_Gateway
         self::$show_qr = $this->settings['show_qr'] == 'yes';
 
         $explorer_url = self::$testnet ? HAVEN_GATEWAY_TESTNET_EXPLORER_URL : HAVEN_GATEWAY_MAINNET_EXPLORER_URL;
-        defined('MONERO_GATEWAY_EXPLORER_URL') || define('MONERO_GATEWAY_EXPLORER_URL', $explorer_url);
+        defined('HAVEN_GATEWAY_EXPLORER_URL') || define('HAVEN_GATEWAY_EXPLORER_URL', $explorer_url);
+        defined('HAVEN_GATEWAY_ADDRESS_PREFIX') || define('HAVEN_GATEWAY_ADDRESS_PREFIX', self::$testnet ? HAVEN_GATEWAY_TESTNET_ADDRESS_PREFIX : HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX);
+        defined('HAVEN_GATEWAY_ADDRESS_PREFIX_INTEGRATED') || define('HAVEN_GATEWAY_ADDRESS_PREFIX_INTEGRATED', self::$testnet ? HAVEN_GATEWAY_TESTNET_ADDRESS_PREFIX_INTEGRATED : HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX_INTEGRATED);
 
         if($add_action)
             add_action('woocommerce_update_options_payment_gateways_'.$this->id, array($this, 'process_admin_options'));
@@ -92,7 +94,7 @@ class Haven_Gateway extends WC_Payment_Gateway
             self::$haven_wallet_rpc = new Haven_Wallet_Rpc(self::$host, self::$port);
         } else {
             require_once('class-haven-explorer-tools.php');
-            self::$haven_explorer_tools = new Haven_Explorer_Tools(self::$testnet);
+            self::$haven_explorer_tools = new Haven_Explorer_Tools();
         }
 
         self::$log = new WC_Logger();

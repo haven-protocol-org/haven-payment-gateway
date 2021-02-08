@@ -16,9 +16,9 @@ defined( 'ABSPATH' ) || exit;
 class Haven_Explorer_Tools
 {
     private $url;
-    public function __construct($testnet = false)
+    public function __construct()
     {
-        $this->url = $testnet ? HAVEN_GATEWAY_TESTNET_EXPLORER_URL : HAVEN_GATEWAY_MAINNET_EXPLORER_URL;
+        $this->url = HAVEN_GATEWAY_EXPLORER_URL;
         $this->url = preg_replace("/\/+$/", "", $this->url);
     }
 

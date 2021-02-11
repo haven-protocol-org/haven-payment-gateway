@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
 define('HAVEN_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
-define('HAVEN_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer.testnet.havenprotocol.org/');
+define('HAVEN_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer-testnet.havenprotocol.org/');
 define('HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX', 0x5af4);
 define('HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
 define('HAVEN_GATEWAY_TESTNET_ADDRESS_PREFIX', 0x59f4);

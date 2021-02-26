@@ -1,35 +1,40 @@
-=== Monero WooCommerce Extension ===
-Contributors: SerHack, mosu-forge
-Donate link: http://monerointegrations.com/donate.html
-Tags: monero, woocommerce, integration, payment, merchant, cryptocurrency, accept monero, monero woocommerce
+=== Haven WooCommerce Extension ===
+Contributors: Marty, zrero
+Donate link: https://havenprotocol.org/donations/
+Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
 Requires at least: 4.0
-Tested up to: 5.0.1
+Tested up to: 5.6
 Stable tag: trunk
 License: MIT license
-License URI: https://github.com/monero-integrations/monerowp/blob/master/LICENSE
+License URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway/blob/master/LICENSE
  
-Monero WooCommerce Extension is a Wordpress plugin that allows to accept monero at WooCommerce-powered online stores.
+Haven WooCommerce Extension is a Wordpress plugin that allows users to accept xUSD in WooCommerce-powered online stores.
 
 == Description ==
 
-Your online store must use WooCommerce platform (free wordpress plugin).
-Once you installed and activated WooCommerce, you may install and activate Monero WooCommerce Extension.
+Your online store must use WooCommerce platform.  Once you installed and activated WooCommerce, you may install and activate Haven WooCommerce Extension.
+
+Currently, this plugin will only support stores with pricing in US Dollars. These prices will be converted into xUSD during checkout, at an exchange rate of 1$USD = 1xUSD.
+
+If your store is not in USD, a multi-currency plugin can be used. 
+
+In the future other currencies, such as EUR, GBP, JPY, and CNY, will be supported.
 
 = Benefits =
 
-* Accept payment directly into your personal Monero wallet.
-* Accept payment in monero for physical and digital downloadable products.
-* Add monero payments option to your existing online store with alternative main currency.
+* Accept payment in xUSD directly into your personal Haven wallet.
+* Accept payment in Haven xUSD for physical and digital downloadable products.
+* Add Haven xUSD payments option to your existing online store.
 * Flexible exchange rate calculations fully managed via administrative settings.
-* Zero fees and no commissions for monero payments processing from any third party.
+* Zero fees and no commissions for xUSD payments processing from any third party.
 * Automatic conversion to Monero via realtime exchange rate feed and calculations.
 * Ability to set exchange rate calculation multiplier to compensate for any possible losses due to bank conversions and funds transfer fees.
 
 == Installation ==
 
-1. Install "Monero WooCommerce extension" wordpress plugin just like any other Wordpress plugin.
+1. Install "Haven WooCommerce extension" wordpress plugin just like any other Wordpress plugin.
 2. Activate
-3. Configure it with your wallet rpc address, (username or password not requested), your monero address 
+3. Configure it with your wallet rpc address, (username or password not requested), your Haven address 
 4. Enjoy it!
 
 == Remove plugin ==
@@ -43,35 +48,7 @@ Once you installed and activated WooCommerce, you may install and activate Moner
 
 == Changelog ==
 
-= 0.1 =
-* First version ! Yay!
-
-= 1.0 =
-* Added the view key option
-
-= 2.1 =
-* Verify transactions without haven-wallet-rpc
-* Optionally accept zero confirmation transactions
-* bug fixing
-
-= 2.2 =
-* Fix some bugs
-
-= 2.3 =
-* Bug fixing
-
-= 3.0.0 =
-Huge shoutout to mosu-forge who contributes a lot to make 3.0 possible.
-* Ability to set number of confirms: 0 for zero conf, up to 60.
-* Amount owed in XHV gets locked in after the order for a configurable amount of time after which the order is invalid, default 60 minutes.
-* Shows transactions received along with the number of confirms right on the order success page, auto-updates through AJAX.
-* QR code generation is done with Javascript instead of sending payment details to a 3rd party.
-* Admin page for showing all transactions made to the wallet.
-* Logic is done via cron, instead of the user having to stay on the order page until payment is confirmed.
-* Payment details (along with the txid) are always visible on the customer's account dashboard on the my orders section.
-* Live prices are also run via cron, shortcodes for showing exchange rates.
-* Properly hooks into order confirmation email page.
-
+soon
 
 == Upgrade Notice ==
 
@@ -79,15 +56,21 @@ soon
 
 == Frequently Asked Questions ==
 
-* What is Monero ?
-Monero is completely private, cryptographically secure, digital cash used across the globe. See https://getmonero.org for more information
+* What is Haven?
+Haven Protocol decentralised algorithmic synthetic asset platform based on the Monero codebase. The idea was for a private coin that anyone could use anywhere with no 3rd parties, with the ability to convert between currencies in your own digital vault. Many described it as the ultimate expression of what a cryptocurrency should be. 
 
-* What is a Monero wallet?
-A Monero wallet is a piece of software that allows you to store your funds and interact with the Monero network. You can get a Monero wallet from https://getmonero.org/downloads
+See https://havenprotocol.org/ for more information
+
+* What is a Haven wallet?
+
+A Haven wallet is a piece of software that allows you to create an Haven account, store your funds and interact with the Haven network. You can get a Haven wallet from https://havenprotocol.org/products/
 
 * What is haven-wallet-rpc ?
-The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Monero network. You can download it from https://getmonero.org/downloads with the command-line tools.
+The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Haven network. You can download it from https://getmonero.org/downloads with the command-line tools.
 
 * Why do I see `[ERROR] Failed to connect to haven-wallet-rpc at localhost port 18080
 Syntax error: Invalid response data structure: Request id: 1 is different from Response id: ` ?
 This is most likely because this plugin can not reach your haven-wallet-rpc. Make sure that you have supplied the correct host IP and port to the plugin in their fields. If your haven-wallet-rpc is on a different server than your wordpress site, make sure that the appropriate port is open with port forwarding enabled.
+
+* How can I get support?
+Support is available in the support channel of Haven Discord: https://discordapp.com/invite/CCtNxfG

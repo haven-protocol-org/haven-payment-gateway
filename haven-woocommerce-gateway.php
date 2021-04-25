@@ -5,7 +5,7 @@ Plugin URI: https://github.com/haven-protocol-org/xUSD-wp
 Description: Extends WooCommerce by adding a Haven Gateway
 Version: 0.0.1
 Tested up to: 4.9.8
-Author:zrero, mosu-forge, SerHack
+Author:zrero, Marty
 Author URI: https://havenprotocol.org/
 */
 // This code isn't for Dark Net Markets, please report them to Authority!
@@ -13,8 +13,8 @@ Author URI: https://havenprotocol.org/
 defined( 'ABSPATH' ) || exit;
 
 // Constants, you can edit these if you fork this repo
-define('HAVEN_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org/');
-define('HAVEN_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer-testnet.havenprotocol.org/');
+define('HAVEN_GATEWAY_MAINNET_EXPLORER_URL', 'https://explorer.havenprotocol.org');
+define('HAVEN_GATEWAY_TESTNET_EXPLORER_URL', 'https://explorer-testnet.havenprotocol.org');
 define('HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX', 0x5af4);
 define('HAVEN_GATEWAY_MAINNET_ADDRESS_PREFIX_INTEGRATED', 0xcd774);
 define('HAVEN_GATEWAY_TESTNET_ADDRESS_PREFIX', 0x59f4);

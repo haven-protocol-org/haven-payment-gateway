@@ -5,15 +5,15 @@
     </tr>
     <tr>
         <td>Total amount</td>
-        <td><?php echo $details['amount_total_formatted']; ?> XHV</td>
+        <td><?php echo $details['amount_total_formatted'].' '.$details['currency']; ?></td>
     </tr>
     <tr>
         <td>Total paid</td>
-        <td><?php echo $details['amount_paid_formatted']; ?> XHV</td>
+        <td><?php echo $details['amount_paid_formatted'].' '.$details['currency']; ?></td>
     </tr>
     <tr>
         <td>Total due</td>
-        <td><?php echo $details['amount_due_formatted']; ?> XHV</td>
+        <td><?php echo $details['amount_due_formatted'].' '.$details['currency']; ?></td>
     </tr>
     <tr>
         <td>Order age</td>

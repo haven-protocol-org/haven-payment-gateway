@@ -75,7 +75,7 @@
             <a href="<?php echo HAVEN_GATEWAY_EXPLORER_URL.'/tx/'.$tx['txid']; ?>" target="_blank"><?php echo $tx['txid']; ?></a>
         </td>
         <td><?php echo $tx['height']; ?></td>
-        <td><?php echo sprintf(HAVEN_GATEWAY_ATOMIC_UNITS_SPRINTF, $tx['amount'] / HAVEN_GATEWAY_ATOMIC_UNITS_POW); ?> XHV</td>
+        <td><?php echo sprintf(HAVEN_GATEWAY_ATOMIC_UNITS_SPRINTF, $tx['amount'] / HAVEN_GATEWAY_ATOMIC_UNITS_POW).' '.$tx['currency']; ?></td>
     </tr>
     <?php endforeach; ?>
 </table>

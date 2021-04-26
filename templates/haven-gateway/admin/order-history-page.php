@@ -1,8 +1,8 @@
 <table class="striped" style="width:100%" cellspacing="0" cellpadding="5">
-    <tr>
+  <!--   <tr>
         <td>Exchange rate</td>
         <td>1 XHV = <?php echo $details['rate_formatted'].' '.$details['currency']; ?></td>
-    </tr>
+    </tr> -->
     <tr>
         <td>Total amount</td>
         <td><?php echo $details['amount_total_formatted'].' '.$details['currency']; ?></td>

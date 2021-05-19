@@ -1,10 +1,10 @@
 <?php
 /*
 Plugin Name: Haven Woocommerce Gateway
-Plugin URI: https://github.com/haven-protocol-org/xUSD-wp
-Description: Extends WooCommerce by adding a Haven Gateway
+Plugin URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway
+Description: Extends WooCommerce by adding a Haven payment gateway
 Version: 0.0.1
-Tested up to: 4.9.8
+Tested up to: 5.7.2
 Author:zrero, Marty
 Author URI: https://havenprotocol.org/
 */
@@ -34,6 +34,11 @@ define('HAVEN_XASSETS',
   [
     'symbol' => '€',
     'wc'     => 'EUR'
+  ],
+  'xGBP' =>
+  [
+    'symbol' => '£',
+    'wc'     => 'GBP'
   ],
   'xCNY' =>
   [

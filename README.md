@@ -1,8 +1,3 @@
-# WARNING USE AT OWN RISK!
-
-* Still in dev phase
-* RPC commands not tested yet
-
 # Haven Protocol Gateway for WooCommerce
 
 ## Features
@@ -25,21 +20,23 @@
 
 ## Installing the plugin
 
-* Download the plugin from the [releases page](https://github.com/haven-protocol-org/xUSD-wp) or clone with `git clone https://github.com/haven-protocol-org/xUSD-wp`
+* Download the plugin from the [releases page](https://github.com/haven-protocol-org/haven-woocommerce-gateway) or clone with `git clone https://github.com/haven-protocol-org/haven-woocommerce-gateway`
 * Unzip or place the `haven-woocommerce-gateway` folder in the `wp-content/plugins` directory.
 * Activate "Haven Protocol Woocommerce Gateway" in your WordPress admin dashboard.
 * It is highly recommended that you use native cronjobs instead of WordPress's "Poor Man's Cron" by adding `define('DISABLE_WP_CRON', true);` into your `wp-config.php` file and adding `* * * * * wget -q -O - https://yourstore.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1` to your crontab.
+* Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)
+* Switch on Haven as a Payment method in WooCommerce > Settings > Payment
 
 ## Option 1: Use your wallet address and viewkey
 
 This is the easiest way to start accepting Haven Protocol on your website. You'll need:
 
 * Your Haven Protocol wallet address starting with `hvx`
-* Your wallet's secret viewkey
+* Your wallet's Private View Key
 
-Then simply select the `viewkey` option in the settings page and paste your address and viewkey. You're all set!
+Then click the `Show Keys` button and copy the `Private View Key` option in the settings page and paste your address and viewkey. You're all set!
 
-Note on privacy: when you validate transactions with your private viewkey, your viewkey is sent to (but not stored on) xmrchain.net over HTTPS. This could potentially allow an attacker to see your incoming, but not outgoing, transactions if they were to get his hands on your viewkey. Even if this were to happen, your funds would still be safe and it would be impossible for somebody to steal your money. For maximum privacy use your own `haven-wallet-rpc` instance.
+Note on privacy: when you validate transactions with your private viewkey, your viewkey is sent to (but not stored on) https://explorer.havenprotocol.org/ over HTTPS. This could potentially allow an attacker to see your incoming, but not outgoing, transactions if they were to get his hands on your viewkey. Even if this were to happen, your funds would still be safe and it would be impossible for somebody to steal your money. For maximum privacy use your own `haven-wallet-rpc` instance.
 
 ## Option 2: Using `haven-wallet-rpc`
 
@@ -48,7 +45,7 @@ The most secure way to accept xUSD, xEUR and other xAssets on your website. You'
 * Root access to your webserver
 * Latest [Haven-currency binaries](https://havenprotocol.org/products/)
 
-After downloading (or compiling) the Haven Protocol binaries on your server, install the [systemd unit files](https://github.com/haven-protocol-org/xUSD-wp/tree/master/assets/systemd-unit-files) or run `havend` and `haven-wallet-rpc` with `screen` or `tmux`. You can skip running `havend` by using a remote node with `haven-wallet-rpc` by adding `--daemon-address https://vault.havenprotocol.org` to the `haven-wallet-rpc.service` file.
+After downloading (or compiling) the Haven Protocol binaries on your server, install the [systemd unit files](https://github.com/haven-protocol-org/haven-woocommerce-gateway/tree/master/assets/systemd-unit-files) or run `havend` and `haven-wallet-rpc` with `screen` or `tmux`. You can skip running `havend` by using a remote node with `haven-wallet-rpc` by adding `--daemon-address https://vault.havenprotocol.org` to the `haven-wallet-rpc.service` file.
 
 Note on security: using this option, while the most secure, requires you to run the Haven wallet RPC program on your server. Best practice for this is to use a view-only wallet since otherwise your server would be running a hot-wallet and a security breach could allow hackers to empty your funds.
 

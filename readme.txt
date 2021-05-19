@@ -1,9 +1,9 @@
 === Haven WooCommerce Extension ===
-Contributors: Marty, zrero
+Contributors: Marty, zrero, blueyred
 Donate link: https://havenprotocol.org/donations/
 Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
 Requires at least: 4.0
-Tested up to: 5.6
+Tested up to: 5.7.2
 Stable tag: trunk
 License: MIT license
 License URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway/blob/master/LICENSE
@@ -14,11 +14,9 @@ Haven WooCommerce Extension is a Wordpress plugin that allows users to accept xU
 
 Your online store must use WooCommerce platform.  Once you installed and activated WooCommerce, you may install and activate Haven WooCommerce Extension.
 
-Currently, this plugin will only support stores with pricing in US Dollars. These prices will be converted into xUSD during checkout, at an exchange rate of 1$USD = 1xUSD.
+This plugin supports stores with pricing in a supported xAsset, currently USD, EUR, CNY, GOLD. 
 
-If your store is not in USD, a multi-currency plugin can be used. 
-
-In the future other currencies, such as EUR, GBP, JPY, and CNY, will be supported.
+If your store is not in a supported currency, a multi-currency plugin can be used. 
 
 = Benefits =
 
@@ -35,7 +33,9 @@ In the future other currencies, such as EUR, GBP, JPY, and CNY, will be supporte
 1. Install "Haven WooCommerce extension" wordpress plugin just like any other Wordpress plugin.
 2. Activate
 3. Configure it with your wallet rpc address, (username or password not requested), your Haven address 
-4. Enjoy it!
+4. Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)
+5. Switch on Haven as a Payment method in WooCommerce > Settings > Payment
+6. Enjoy it!
 
 == Remove plugin ==
 
@@ -43,12 +43,13 @@ In the future other currencies, such as EUR, GBP, JPY, and CNY, will be supporte
 2. Delete plugin through the 'Plugins' menu in WordPress
 
 == Screenshots == 
-1. Monero Payment Box
-2. Monero Options
+
+1. Payment Box
+2. Options
 
 == Changelog ==
 
-soon
+0.0.1 Initial plugin
 
 == Upgrade Notice ==
 

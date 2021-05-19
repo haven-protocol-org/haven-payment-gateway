@@ -19,7 +19,7 @@ class Haven_Cryptonote
     public function __construct()
     {
         $this->ed25519 = new ed25519();
-        $this->base58 = new Monero_base58();
+        $this->base58 = new Monero_base58_haven();
         $this->address_prefix = HAVEN_GATEWAY_ADDRESS_PREFIX;
         $this->address_prefix_integrated = HAVEN_GATEWAY_ADDRESS_PREFIX_INTEGRATED;
     }

@@ -1,4 +1,4 @@
-=== Haven WooCommerce Extension ===
+=== Haven Payment Gateway ===
 Contributors: Marty, zrero, blueyred
 Donate link: https://havenprotocol.org/donations/
 Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
@@ -8,7 +8,7 @@ Stable tag: trunk
 License: MIT license
 License URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway/blob/master/LICENSE
  
-Haven WooCommerce Extension is a Wordpress plugin that allows users to accept xUSD in WooCommerce-powered online stores.
+Haven WooCommerce Payment Gateway is a Wordpress plugin that allows users to accept xUSD in WooCommerce-powered online stores.
 
 == Description ==
 
@@ -30,7 +30,7 @@ If your store is not in a supported currency, a multi-currency plugin can be use
 
 == Installation ==
 
-1. Install "Haven WooCommerce extension" wordpress plugin just like any other Wordpress plugin.
+1. Install "Haven Payment Gateway" wordpress plugin just like any other Wordpress plugin.
 2. Activate
 3. Configure it with your wallet rpc address, (username or password not requested), your Haven address 
 4. Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)

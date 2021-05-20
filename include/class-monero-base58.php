@@ -26,7 +26,7 @@
  * $decoded = $base58->decode('479cG5opa54beQWSyqNoWw5tna9sHUNmMTtiFqLPaUhDevpJ2YLwXAggSx5ePdeFrYF8cdbmVRSmp1Kn3t4Y9kFu7rZ7pFw');
  *
  */
-class Monero_base58
+class Monero_base58_haven
 {
   static $alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
   static $encoded_block_sizes = [0, 2, 3, 5, 6, 7, 9, 10, 11];

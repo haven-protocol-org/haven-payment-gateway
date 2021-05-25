@@ -16,10 +16,7 @@ defined( 'ABSPATH' ) || exit;
 class Haven_Wallet_Rpc
 {
     protected $url = null, $is_debug = false;
-    protected $curl_options = array(
-        CURLOPT_CONNECTTIMEOUT => 8,
-        CURLOPT_TIMEOUT => 8
-    );
+    protected $request_timeout = 8;
     protected $host;
     protected $port;
     private $httpErrors = array(
@@ -57,7 +54,7 @@ class Haven_Wallet_Rpc
         $this->is_debug = !empty($pIsDebug);
         return $this;
     }
-
+/*
     public function setCurlOptions($pOptionsArray)
     {
         if (is_array($pOptionsArray)) {
@@ -67,7 +64,7 @@ class Haven_Wallet_Rpc
         }
         return $this;
     }
-
+*/
     public function _print($json)
     {
         $json_encoded = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -149,6 +146,8 @@ class Haven_Wallet_Rpc
 
     protected function & getResponse(&$pRequest)
     {
+        
+/*  *** * /      
         // do the actual connection
         $ch = curl_init();
         if (!$ch) {
@@ -170,6 +169,8 @@ class Haven_Wallet_Rpc
 
         // check http status code
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+       
+
         if (isset($this->httpErrors[$httpCode])) {
             if(is_admin())
                 echo 'Response Http Error - ' . $this->httpErrors[$httpCode];
@@ -182,7 +183,37 @@ class Haven_Wallet_Rpc
         }
         // close the connection
         curl_close($ch);
-        return $response;
+/* ** */        
+        
+        $post_args = array(
+                'method' => 'POST',
+                'headers' => array('Content-type: application/json'),
+                'body' => $pRequest,
+                'sslverify' => false,
+                'timeout' => $this->request_timeout,
+                'compress' => true,  
+                );
+                
+        $response = wp_remote_post($this->url, $post_args);
+        
+        $http_code = wp_remote_retrieve_response_code($response);
+        
+        if (isset($this->httpErrors[$http_code])) {
+            if(is_admin())
+                echo 'Response Http Error - ' . $this->httpErrors[$http_code];
+        }
+
+        if ( is_wp_error($response) ) {
+            if(is_admin()){
+                $error_message = $response->get_error_message();
+                echo '[ERROR] Failed to connect to haven-wallet-rpc at ' . $this->host . ' port '. $this->port .'</br>';
+                echo '[MSG] ' . $error_message .'</br>';
+            }
+        }
+        
+        $response_body = wp_remote_retrieve_body($response);
+                
+        return $response_body;
     }
 
     //prints result as json

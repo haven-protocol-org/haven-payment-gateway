@@ -24,13 +24,7 @@ class Haven_Explorer_Tools
 
     private function call_api($endpoint)
     {
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $this->url . $endpoint,
-        ));
-        $data = curl_exec($curl);
-        curl_close($curl);
+        $data = wp_remote_retrieve_body( wp_remote_get( $this->url . $endpoint ) );
         return json_decode($data, true);
     }
 

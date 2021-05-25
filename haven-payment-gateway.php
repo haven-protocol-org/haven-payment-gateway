@@ -3,7 +3,7 @@
 Plugin Name: Haven Payment Gateway
 Plugin URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway
 Description: Extends WooCommerce by adding a Haven payment gateway
-Version: 0.0.1
+Version: 1.0.0
 Tested up to: 5.7.2
 Author:zrero, Marty
 Author URI: https://havenprotocol.org/

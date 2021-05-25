@@ -40,7 +40,7 @@
             Total due:
             <strong class="haven_details_row">
                 <span class="haven_details_main">
-                    <span id="haven_total_due"></span> <?= $details['currency'] ?>
+                    <span id="haven_total_due"></span> <?php echo $details['currency'] ?>
                 </span>
                 <span class="haven_details_right button-row">
                     <button href="#" class="button clipboard" title="Copy Amount"
@@ -53,13 +53,13 @@
         <li style="display:none">
             Total order amount:
             <strong>
-                <span id="haven_total_amount"></span> <?= $details['currency'] ?>
+                <span id="haven_total_amount"></span> <?php echo $details['currency'] ?>
             </strong>
         </li>
         <li>
             Total paid:
             <strong>
-                <span id="haven_total_paid"></span> <?= $details['currency'] ?>
+                <span id="haven_total_paid"></span> <?php echo $details['currency'] ?>
             </strong>
         </li>
         <!---<li>

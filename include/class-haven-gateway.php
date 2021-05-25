@@ -566,7 +566,7 @@ class Haven_Gateway extends WC_Payment_Gateway
             self::ajax_output(array('error' => '[ERROR] User not logged in'));
         
         if( isset($_GET['order_id']) ):
-            $order_id = preg_replace("/[^0-9]+/", "", $_GET['order_id']);
+            $order_id = intval( preg_replace('/[^0-9]+/', '', $_GET['order_id']) );
             $order = wc_get_order( $order_id );
     
             if($order->get_customer_id() != $user->ID)

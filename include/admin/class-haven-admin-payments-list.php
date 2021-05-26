@@ -11,7 +11,7 @@ if(!class_exists('WP_List_Table')) {
 
 class Haven_Admin_Payments_List extends WP_List_Table {
     
-    $allowed_types = array('pending','paid','confirmed','expired','all');
+    static $allowed_types = array('pending','paid','confirmed','expired','all');
     
     function __construct() {
         parent::__construct(array(
@@ -72,6 +72,7 @@ HTML;
             echo <<<HTML
             <div class="wrap">
                 <h1 class="wp-heading-inline">Haven Protocol Payments</h1>
+                <p>Payment transactions on the Haven network</p>
                 $balance_info
                 <hr class="wp-header-end">
                 <ul class="subsubsub">
@@ -207,7 +208,7 @@ HTML;
 
     protected function get_filter_vars() {
 
-        $type = (isset($_GET['type']) && in_array($_GET['type'], $this->allowed_types)) ? $_GET['type'] : null;
+        $type = (isset($_GET['type']) && in_array($_GET['type'], self::$allowed_types)) ? $_GET['type'] : null;
         return (object) array(
             'type' => $type,
         );

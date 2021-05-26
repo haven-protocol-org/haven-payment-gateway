@@ -202,7 +202,7 @@ class Haven_Gateway extends WC_Payment_Gateway
     public function process_payment($order_id)
     {
         global $wpdb, $xAssetSelected;
-        $table_name = $wpdb->prefix.'haven_gateway_quotes';
+        $quotes_table = $wpdb->prefix.'haven_gateway_quotes';
 
         $order = wc_get_order($order_id);
 
@@ -210,7 +210,7 @@ class Haven_Gateway extends WC_Payment_Gateway
           // Generate a unique payment id
           do {
               $payment_id = bin2hex(openssl_random_pseudo_bytes(8));
-              $query = $wpdb->prepare("SELECT COUNT(*) FROM $table_name WHERE payment_id=%s", array($payment_id));
+              $query = $wpdb->prepare("SELECT COUNT(*) FROM $quotes_table WHERE payment_id=%s", array($payment_id));
               $payment_id_used = $wpdb->get_var($query);
           } while ($payment_id_used);
         }
@@ -232,7 +232,7 @@ class Haven_Gateway extends WC_Payment_Gateway
 
         $haven_amount = intval($haven_amount * HAVEN_GATEWAY_ATOMIC_UNITS_POW);
 
-        $query = $wpdb->prepare("INSERT INTO $table_name (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $haven_amount));
+        $query = $wpdb->prepare("INSERT INTO $quotes_table (order_id, payment_id, currency, rate, amount) VALUES (%d, %s, %s, %d, %d)", array($order_id, $payment_id, $xAssetSelected, $rate, $haven_amount));
         $wpdb->query($query);
 
         $order->update_status('on-hold', __('Awaiting offline payment', 'haven_gateway'));
@@ -259,13 +259,15 @@ class Haven_Gateway extends WC_Payment_Gateway
             $height = self::$haven_wallet_rpc->getheight();
         else
             $height = self::$haven_explorer_tools->getheight();
+            
         set_transient('haven_gateway_network_height', $height);
 
         // Get pending payments
-        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
+        $quotes_table_name = $wpdb->prefix.'haven_gateway_quotes';
+        $tx_table_name = $wpdb->prefix.'haven_gateway_quotes_txids';
 
-        $query = $wpdb->prepare("SELECT *, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE pending=1", array());
+        $query = $wpdb->prepare("SELECT *, $quotes_table_name.payment_id AS payment_id, $quotes_table_name.amount AS amount_total, $tx_table_name.amount AS amount_paid, NOW() as now " .
+                                "FROM $quotes_table_name LEFT JOIN $tx_table_name ON $quotes_table_name.payment_id = $tx_table_name.payment_id AND $quotes_table_name.currency LIKE $tx_table_name.currency WHERE pending=1", array());
 
         $rows = $wpdb->get_results($query);
 
@@ -300,7 +302,7 @@ class Haven_Gateway extends WC_Payment_Gateway
             foreach($new_txs as $new_tx) {
                 $is_new_tx = true;
                 foreach($old_txs as $old_tx) {
-                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid && $new_tx['currency'] == $old_tx->currency) {
+                    if($new_tx['txid'] == $old_tx->txid && $new_tx['amount'] == $old_tx->amount_paid && strcasecmp($new_tx['currency'], $old_tx->currency) == 0) {
                         $is_new_tx = false;
                         break;
                     }
@@ -309,7 +311,7 @@ class Haven_Gateway extends WC_Payment_Gateway
                     $old_txs[] = (object) $new_tx;
                 }
 
-                $query = $wpdb->prepare("INSERT INTO $table_name_2 (payment_id, txid, currency, amount, height) VALUES (%s, %s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['currency'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
+                $query = $wpdb->prepare("INSERT INTO $tx_table_name (payment_id, txid, currency, amount, height) VALUES (%s, %s, %s, %d, %d) ON DUPLICATE KEY UPDATE height=%d", array($payment_id, $new_tx['txid'], $new_tx['currency'], $new_tx['amount'], $new_tx['height'], $new_tx['height']));
                 $wpdb->query($query);
             }
 
@@ -317,8 +319,8 @@ class Haven_Gateway extends WC_Payment_Gateway
             $heights = array();
             $amount_paid = 0;
             foreach($txs as $tx) {
-                if($quote->currency == $tx->currency){
-                  $amount_paid += $tx->amount;
+                if( strcasecmp($quote->currency, $tx->currency) == 0){
+                    $amount_paid += $tx->amount;
                 }
                 $heights[] = $tx->height;
             }
@@ -342,7 +344,7 @@ class Haven_Gateway extends WC_Payment_Gateway
 
             if($paid && $confirmed) {
                 self::$log->add('Haven_Payments', "[SUCCESS] Payment has been confirmed for order id $order_id and payment id $payment_id (currency: $quote->currency)");
-                $query = $wpdb->prepare("UPDATE $table_name_1 SET confirmed=1,paid=1,pending=0 WHERE payment_id=%s", array($payment_id));
+                $query = $wpdb->prepare("UPDATE $quotes_table_name SET confirmed=1,paid=1,pending=0 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 
                 unset(self::$payment_details[$order_id]);
@@ -355,7 +357,7 @@ class Haven_Gateway extends WC_Payment_Gateway
 
             } else if($paid) {
                 self::$log->add('Haven_Payments', "[SUCCESS] Payment has been received for order id $order_id and payment id $payment_id");
-                $query = $wpdb->prepare("UPDATE $table_name_1 SET paid=1 WHERE payment_id=%s", array($payment_id));
+                $query = $wpdb->prepare("UPDATE $quotes_table_name SET paid=1 WHERE payment_id=%s", array($payment_id));
                 $wpdb->query($query);
 
                 unset(self::$payment_details[$order_id]);
@@ -366,7 +368,7 @@ class Haven_Gateway extends WC_Payment_Gateway
                 $order_age_seconds = $timestamp_now->getTimestamp() - $timestamp_created->getTimestamp();
                 if($order_age_seconds > self::$valid_time) {
                     self::$log->add('Haven_Payments', "[FAILED] Payment has expired for order id $order_id and payment id $payment_id");
-                    $query = $wpdb->prepare("UPDATE $table_name_1 SET pending=0 WHERE payment_id=%s", array($payment_id));
+                    $query = $wpdb->prepare("UPDATE $quotes_table_name SET pending=0 WHERE payment_id=%s", array($payment_id));
                     $wpdb->query($query);
 
                     unset(self::$payment_details[$order_id]);
@@ -438,15 +440,19 @@ class Haven_Gateway extends WC_Payment_Gateway
             return self::$payment_details[$order_id];
 
         global $wpdb;
-        $table_name_1 = $wpdb->prefix.'haven_gateway_quotes';
-        $table_name_2 = $wpdb->prefix.'haven_gateway_quotes_txids';
-        $query = $wpdb->prepare("SELECT *, $table_name_1.currency as currency, $table_name_1.payment_id AS payment_id, $table_name_1.amount AS amount_total, $table_name_2.amount AS amount_paid, NOW() as now FROM $table_name_1 LEFT JOIN $table_name_2 ON $table_name_1.payment_id = $table_name_2.payment_id WHERE order_id=%d", array($order_id));
+        $quotes_table = $wpdb->prefix . 'haven_gateway_quotes';
+        $tx_table = $wpdb->prefix . 'haven_gateway_quotes_txids';
+        //note the currency LIKE comparison - can be xGBP or XGBP.. 
+        $query_string = "SELECT *, $quotes_table.currency as currency, $quotes_table.payment_id AS payment_id, $quotes_table.amount AS amount_total, $tx_table.amount AS amount_paid, NOW() as now " .
+                        "FROM $quotes_table LEFT JOIN $tx_table ON $quotes_table.payment_id = $tx_table.payment_id AND $quotes_table.currency LIKE $tx_table.currency WHERE order_id=%d";
+        $query = $wpdb->prepare($query_string, array($order_id));
         $details = $wpdb->get_results($query);
         if (count($details)) {
             $txs = array();
             $heights = array();
             $amount_paid = 0;
             foreach($details as $tx) {
+                
                 if(!isset($tx->txid))
                     continue;
                 $txs[] = array(

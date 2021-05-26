@@ -226,7 +226,9 @@ function haven_install() {
                confirmed TINYINT NOT NULL DEFAULT 0,
                pending TINYINT NOT NULL DEFAULT 1,
                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-               PRIMARY KEY (order_id)
+               PRIMARY KEY (order_id),
+               KEY payment_id (payment_id)
+               KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
     }
@@ -241,7 +243,9 @@ function haven_install() {
                currency VARCHAR(20) DEFAULT '' NOT NULL,
                height MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                PRIMARY KEY (id),
-               UNIQUE KEY (payment_id, txid, amount)
+               UNIQUE KEY (payment_id, txid, amount),
+               KEY payment_id (payment_id)
+               KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
     }

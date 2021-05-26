@@ -1,5 +1,5 @@
 === Haven Payment Gateway ===
-Contributors: Marty, zrero, blueyred
+Contributors: Marty, zrero, bluey.red
 Donate link: https://havenprotocol.org/donations/
 Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
 Requires at least: 4.0
@@ -31,11 +31,11 @@ If your store is not in a supported currency, a multi-currency plugin can be use
 == Installation ==
 
 1. Install "Haven Payment Gateway" wordpress plugin just like any other Wordpress plugin.
-2. Activate
-3. Configure it with your wallet rpc address, (username or password not requested), your Haven address 
+2. Activate "Haven Protocol Woocommerce Gateway" in your WordPress admin dashboard.
+3. It is highly recommended that you use native cronjobs instead of WordPress's "Poor Man's Cron" by adding `define('DISABLE_WP_CRON', true);` into your `wp-config.php` file and adding `* * * * * wget -q -O - https://yourstore.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1` to your crontab.
 4. Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)
 5. Switch on Haven as a Payment method in WooCommerce > Settings > Payment
-6. Enjoy it!
+* Note: The receiving wallet should be not be used to make payments to the store.
 
 == Remove plugin ==
 
@@ -65,6 +65,9 @@ A Haven wallet is a piece of software that allows you to create an Haven account
 
 * What is haven-wallet-rpc ?
 The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Haven network. You can download it from https://github.com/haven-protocol-org/haven-offshore/releases/latest with the command-line tools.
+
+* Setting up a wallet
+The easiest and quickest way is to visit the Haven web wallet at https://vault.havenprotocol.org/ for an in depth guide visit the Haven Protocol knowledge base at https://havenprotocol.org/knowledge/create-account/ 
 
 * Why do I see `[ERROR] Failed to connect to haven-wallet-rpc at localhost port 18080
 Syntax error: Invalid response data structure: Request id: 1 is different from Response id: ` ?

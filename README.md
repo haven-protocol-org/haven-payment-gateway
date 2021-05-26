@@ -26,6 +26,7 @@
 * It is highly recommended that you use native cronjobs instead of WordPress's "Poor Man's Cron" by adding `define('DISABLE_WP_CRON', true);` into your `wp-config.php` file and adding `* * * * * wget -q -O - https://yourstore.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1` to your crontab.
 * Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)
 * Switch on Haven as a Payment method in WooCommerce > Settings > Payment
+* Note: The receiving wallet should be not be used to make payments to the store.
 
 ## Option 1: Use your wallet address and viewkey
 
@@ -69,7 +70,7 @@ Note on security: using this option, while the most secure, requires you to run 
 
 ## Shortcodes
 
-This plugin makes available two shortcodes that you can use in your theme.
+This plugin makes available a [haven-accepted-here] shortcode that you can use in your theme.
 
 #### Haven accepted here badge
 
@@ -79,10 +80,14 @@ This will display a badge showing that you accept Haven-currency.
 
 ![Haven Accepted Here](/assets/images/haven-accepted-here2x.png?raw=true "Haven Accepted Here")
 
+## Setting up a wallet
+
+The easiest and quickest way is to visit [the Haven web wallet](https://vault.havenprotocol.org/) for an in depth guide visit the [Haven Protocol knowledge base](https://havenprotocol.org/knowledge/create-account/) 
+
 ## Donations
 
-any haven-currency: tba
+By donating to the following Haven address, you are supporting the Haven Project
 
-monero-currency: 44krVcL6TPkANjpFwS2GWvg1kJhTrN7y9heVeQiDJ3rP8iGbCd5GeA4f3c2NKYHC1R4mCgnW7dsUUUae2m9GiNBGT4T8s2X
+any haven-currency: hvxy8SJK1xoEMZv7wyDspxH8gwTwcRvhVRaLQhq4o8rPYoGA8c6Q9Ey9KFNhQUZcn62q9jZTuU5E2QpoXDM63jyy6YAHZwV1Db
 
-ryo-currency: 4A6BQp7do5MTxpCguq1kAS27yMLpbHcf89Ha2a8Shayt2vXkCr6QRpAXr1gLYRV5esfzoK3vLJTm5bDWk5gKmNrT6s6xZep
+Thank you for your support. The team are very grateful.

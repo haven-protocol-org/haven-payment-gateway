@@ -1,20 +1,20 @@
-=== Haven WooCommerce Extension ===
-Contributors: Marty, zrero, blueyred
+=== Haven Payment Gateway ===
+Contributors: Marty, zrero, bluey.red
 Donate link: https://havenprotocol.org/donations/
 Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
 Requires at least: 4.0
 Tested up to: 5.7.2
-Stable tag: trunk
+Stable tag: 1.0.0
 License: MIT license
 License URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway/blob/master/LICENSE
  
-Haven WooCommerce Extension is a Wordpress plugin that allows users to accept xUSD in WooCommerce-powered online stores.
+Haven WooCommerce Payment Gateway is a Wordpress plugin that allows users to accept xUSD in WooCommerce-powered online stores.
 
 == Description ==
 
 Your online store must use WooCommerce platform.  Once you installed and activated WooCommerce, you may install and activate Haven WooCommerce Extension.
 
-This plugin supports stores with pricing in a supported xAsset, currently USD, EUR, CNY, GOLD. 
+This plugin supports stores with pricing in a supported xAsset, currently USD, GBP, EUR, CNY, GOLD. 
 
 If your store is not in a supported currency, a multi-currency plugin can be used. 
 
@@ -25,17 +25,17 @@ If your store is not in a supported currency, a multi-currency plugin can be use
 * Add Haven xUSD payments option to your existing online store.
 * Flexible exchange rate calculations fully managed via administrative settings.
 * Zero fees and no commissions for xUSD payments processing from any third party.
-* Automatic conversion to Monero via realtime exchange rate feed and calculations.
+* Automatic conversion to Haven via realtime exchange rate feed and calculations.
 * Ability to set exchange rate calculation multiplier to compensate for any possible losses due to bank conversions and funds transfer fees.
 
 == Installation ==
 
-1. Install "Haven WooCommerce extension" wordpress plugin just like any other Wordpress plugin.
-2. Activate
-3. Configure it with your wallet rpc address, (username or password not requested), your Haven address 
+1. Install "Haven Payment Gateway" wordpress plugin just like any other Wordpress plugin.
+2. Activate "Haven Protocol Woocommerce Gateway" in your WordPress admin dashboard.
+3. It is highly recommended that you use native cronjobs instead of WordPress's "Poor Man's Cron" by adding `define('DISABLE_WP_CRON', true);` into your `wp-config.php` file and adding `* * * * * wget -q -O - https://yourstore.com/wp-cron.php?doing_wp_cron >/dev/null 2>&1` to your crontab.
 4. Your store's currency needs to be set to a supported xAsset currency in WooCommerce > Settings > General - Currency  (currently USD, EUR, CNY, GOLD)
 5. Switch on Haven as a Payment method in WooCommerce > Settings > Payment
-6. Enjoy it!
+* Note: The receiving wallet should be not be used to make payments to the store.
 
 == Remove plugin ==
 
@@ -50,10 +50,7 @@ If your store is not in a supported currency, a multi-currency plugin can be use
 == Changelog ==
 
 0.0.1 Initial plugin
-
-== Upgrade Notice ==
-
-soon
+1.0.0 Wordpress directory unification
 
 == Frequently Asked Questions ==
 
@@ -64,10 +61,13 @@ See https://havenprotocol.org/ for more information
 
 * What is a Haven wallet?
 
-A Haven wallet is a piece of software that allows you to create an Haven account, store your funds and interact with the Haven network. You can get a Haven wallet from https://havenprotocol.org/products/
+A Haven wallet is a piece of software that allows you to create an Haven account, store your funds and interact with the Haven network. You can get a Haven wallet from https://github.com/haven-protocol-org/haven-offshore/releases/latest
 
 * What is haven-wallet-rpc ?
-The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Haven network. You can download it from https://getmonero.org/downloads with the command-line tools.
+The haven-wallet-rpc is an RPC server that will allow this plugin to communicate with the Haven network. You can download it from https://github.com/haven-protocol-org/haven-offshore/releases/latest with the command-line tools.
+
+* Setting up a wallet
+The easiest and quickest way is to visit the Haven web wallet at https://vault.havenprotocol.org/ for an in depth guide visit the Haven Protocol knowledge base at https://havenprotocol.org/knowledge/create-account/ 
 
 * Why do I see `[ERROR] Failed to connect to haven-wallet-rpc at localhost port 18080
 Syntax error: Invalid response data structure: Request id: 1 is different from Response id: ` ?

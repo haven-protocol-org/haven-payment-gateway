@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Haven Woocommerce Gateway
+Plugin Name: Haven Payment Gateway
 Plugin URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway
 Description: Extends WooCommerce by adding a Haven payment gateway
-Version: 0.0.1
+Version: 1.0.0
 Tested up to: 5.7.2
-Author:zrero, Marty
+Author:zrero, Marty, bluey.red
 Author URI: https://havenprotocol.org/
 */
 // This code isn't for Dark Net Markets, please report them to Authority!
@@ -226,7 +226,9 @@ function haven_install() {
                confirmed TINYINT NOT NULL DEFAULT 0,
                pending TINYINT NOT NULL DEFAULT 1,
                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-               PRIMARY KEY (order_id)
+               PRIMARY KEY (order_id),
+               KEY payment_id (payment_id)
+               KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
     }
@@ -241,7 +243,9 @@ function haven_install() {
                currency VARCHAR(20) DEFAULT '' NOT NULL,
                height MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                PRIMARY KEY (id),
-               UNIQUE KEY (payment_id, txid, amount)
+               UNIQUE KEY (payment_id, txid, amount),
+               KEY payment_id (payment_id)
+               KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
     }

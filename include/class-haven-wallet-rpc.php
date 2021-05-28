@@ -6,7 +6,7 @@
  * http://json-rpc.org/wiki/specification
  *
  * @author Kacper Rowinski <krowinski@implix.com>
- * http://implix.com
+ * Modified to remove curl by Blueyred
  * Modified to work with haven-rpc wallet by Serhack and cryptochangements
  * Modified to work with haven-wallet-rpc wallet by mosu-forge
  */
@@ -34,7 +34,7 @@ class Haven_Wallet_Rpc
 
     public function __construct($pHost, $pPort)
     {
-        $this->validate(false === extension_loaded('curl'), 'The curl extension must be loaded to use this class!');
+
         $this->validate(false === extension_loaded('json'), 'The json extension must be loaded to use this class!');
 
         $this->host = $pHost;
@@ -54,17 +54,7 @@ class Haven_Wallet_Rpc
         $this->is_debug = !empty($pIsDebug);
         return $this;
     }
-/*
-    public function setCurlOptions($pOptionsArray)
-    {
-        if (is_array($pOptionsArray)) {
-            $this->curl_options = $pOptionsArray + $this->curl_options;
-        } else {
-            if(is_admin()) echo 'Invalid options type.';
-        }
-        return $this;
-    }
-*/
+
     public function _print($json)
     {
         $json_encoded = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -145,45 +135,7 @@ class Haven_Wallet_Rpc
     }
 
     protected function & getResponse(&$pRequest)
-    {
-        
-/*  *** * /      
-        // do the actual connection
-        $ch = curl_init();
-        if (!$ch) {
-            throw new RuntimeException('Could\'t initialize a cURL session');
-        }
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $pRequest);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-        curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        if (!curl_setopt_array($ch, $this->curl_options)) {
-            throw new RuntimeException('Error while setting curl options');
-        }
-        // send the request
-        $response = curl_exec($ch);
-
-        // check http status code
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-       
-
-        if (isset($this->httpErrors[$httpCode])) {
-            if(is_admin())
-                echo 'Response Http Error - ' . $this->httpErrors[$httpCode];
-        }
-
-        // check for curl error
-        if (0 < curl_errno($ch)) {
-            if(is_admin())
-                echo '[ERROR] Failed to connect to haven-wallet-rpc at ' . $this->host . ' port '. $this->port .'</br>';
-        }
-        // close the connection
-        curl_close($ch);
-/* ** */        
+    {   
         
         $post_args = array(
                 'method' => 'POST',

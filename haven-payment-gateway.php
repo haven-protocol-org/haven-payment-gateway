@@ -214,7 +214,7 @@ function haven_install() {
     require_once( ABSPATH . '/wp-admin/includes/upgrade.php' );
     $charset_collate = $wpdb->get_charset_collate();
 
-    $table_name = $wpdb->prefix . "haven_gateway_quotes";
+    $table_name = $wpdb->prefix . "haven_gateway_quotes";    
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
         $sql = "CREATE TABLE $table_name (
                order_id BIGINT(20) UNSIGNED NOT NULL,
@@ -227,13 +227,15 @@ function haven_install() {
                pending TINYINT NOT NULL DEFAULT 1,
                created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                PRIMARY KEY (order_id),
-               KEY payment_id (payment_id)
+               KEY payment_id (payment_id),
                KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
+        
     }
 
     $table_name = $wpdb->prefix . "haven_gateway_quotes_txids";
+    
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
         $sql = "CREATE TABLE $table_name (
                id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -243,14 +245,14 @@ function haven_install() {
                currency VARCHAR(20) DEFAULT '' NOT NULL,
                height MEDIUMINT UNSIGNED NOT NULL DEFAULT 0,
                PRIMARY KEY (id),
-               UNIQUE KEY (payment_id, txid, amount),
-               KEY payment_id (payment_id)
+               UNIQUE KEY `payment_unique` (payment_id, txid, amount),
                KEY currency (currency)
                ) $charset_collate;";
         dbDelta($sql);
     }
 
     $table_name = $wpdb->prefix . "haven_gateway_live_rates";
+    
     if($wpdb->get_var("show tables like '$table_name'") != $table_name) {
         $sql = "CREATE TABLE $table_name (
                currency VARCHAR(6) DEFAULT '' NOT NULL,
@@ -259,5 +261,8 @@ function haven_install() {
                PRIMARY KEY (currency)
                ) $charset_collate;";
         dbDelta($sql);
+                
     }
+    
+
 }

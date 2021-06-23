@@ -4,7 +4,7 @@ Donate link: https://havenprotocol.org/donations/
 Tags: xhv, xusd, haven, WooCommerce, integration, payment, merchant, cryptocurrency, accept haven, accept xhv, xhv woocommerce
 Requires at least: 4.0
 Tested up to: 5.7.2
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: MIT license
 License URI: https://github.com/haven-protocol-org/haven-woocommerce-gateway/blob/master/LICENSE
  
@@ -51,6 +51,7 @@ If your store is not in a supported currency, a multi-currency plugin can be use
 
 0.0.1 Initial plugin
 1.0.0 Wordpress directory unification
+1.0.1 Table creation sql bugfix
 
 == Frequently Asked Questions ==
 
